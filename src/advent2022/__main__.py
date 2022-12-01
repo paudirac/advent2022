@@ -7,6 +7,7 @@ from advent2022 import calories
 
 SOLVERS = {
     '1_1': calories.most_calories_carried,
+    '1_2': calories.top_three_total,
 }
 
 

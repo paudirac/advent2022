@@ -30,3 +30,8 @@ def most_calories_carried(lines):
 
 def top_three_carriers(lines):
     elves = _elves(lines)
+    return sorted(elves, key=lambda e: e.total_calories, reverse=True)[:3]
+
+def top_three_total(lines):
+    top_carriers = top_three_carriers(lines)
+    return sum(map(lambda elf: elf.total_calories, top_carriers))

@@ -4,7 +4,8 @@ log = get_logger(__name__)
 
 from advent2022.calories import (
     most_calories_carried,
-    top_three_carriers
+    top_three_carriers,
+    top_three_total,
 )
 
 example = """
@@ -31,4 +32,8 @@ def test_the_elve_that_carries_most_calories_carries_24000():
 
 def test_top_three_carriers():
     top_carriers = top_three_carriers(lines)
+    log.debug(f'{top_carriers}')
     assert len(top_carriers) == 3
+
+def test_top_three_carriers_carry_45000():
+    assert top_three_total(lines) == 45000
