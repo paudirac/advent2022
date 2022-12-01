@@ -12,7 +12,7 @@ class Elf(list):
     def total_calories(self):
         return sum(map(lambda food: food.calories, self))
 
-def most_calories_carried(lines):
+def _elves(lines):
     elves = []
     elf = Elf()
     elves.append(elf)
@@ -22,5 +22,11 @@ def most_calories_carried(lines):
             elves.append(elf)
         else:
             elf.append(Food(line))
+    return elves
 
+def most_calories_carried(lines):
+    elves = _elves(lines)
     return max(elf.total_calories for elf in elves)
+
+def top_three_carriers(lines):
+    elves = _elves(lines)
