@@ -3,11 +3,15 @@ from utils import get_logger, read_input
 
 log = get_logger(__name__)
 
-from advent2022 import calories
+from advent2022 import (
+    calories,
+    rock,
+)
 
 SOLVERS = {
     '1_1': calories.most_calories_carried,
     '1_2': calories.top_three_total,
+    '2_1': rock.total_score,
 }
 
 
