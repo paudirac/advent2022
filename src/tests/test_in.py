@@ -32,3 +32,7 @@ def test_input_day_1():
     for line in lines:
         assert not line.endswith('\n')
     assert len(lines) == 14
+
+def test_input_day_2():
+    lines = read_input(2)
+    assert len(lines) == 2500
