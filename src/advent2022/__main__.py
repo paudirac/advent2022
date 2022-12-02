@@ -12,6 +12,7 @@ SOLVERS = {
     '1_1': calories.most_calories_carried,
     '1_2': calories.top_three_total,
     '2_1': rock.total_score,
+    '2_2': rock.total_score_strategy_guide,
 }
 
 

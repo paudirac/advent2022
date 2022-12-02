@@ -1,4 +1,7 @@
 from collections import namedtuple
+from utils import get_logger
+
+log = get_logger(__name__)
 
 def sentinel(name):
     def __str__(self):
@@ -72,6 +75,39 @@ class Round(namedtuple('Round', 'left right')):
         left, right = line.split()
         return cls(decode(left), decode(right))
 
-def total_score(lines):
-    rounds = [Round.from_line(line) for line in lines]
+    @classmethod
+    def from_line_right_drives_play(cls, line):
+        left, right = line.split()
+        left_move = decode(left)
+        _, result = decode_result(right)
+        right_move = choose_right(left_move, result)
+        return cls(left_move, right_move)
+
+def total_score(lines, line_round=Round.from_line):
+    rounds = [line_round(line) for line in lines]
     return sum(play_score(*rund) for rund in rounds)
+
+def decode_result(right):
+    RESULTS = {
+        'X': (Win, Lose),
+        'Y': (Draw, Draw),
+        'Z': (Lose, Win),
+    }
+    return RESULTS[right]
+
+def choose_right(left, result):
+    RIGHT = {
+        (Rock, Win): Paper,
+        (Rock, Lose): Scissors,
+        (Rock, Draw): Rock,
+        (Paper, Win): Scissors,
+        (Paper, Lose): Rock,
+        (Paper, Draw): Paper,
+        (Scissors, Win): Rock,
+        (Scissors, Lose): Paper,
+        (Scissors, Draw): Scissors,
+    }
+    return RIGHT[(left, result)]
+
+def total_score_strategy_guide(lines):
+    return total_score(lines, line_round=Round.from_line_right_drives_play)

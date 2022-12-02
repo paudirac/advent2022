@@ -17,6 +17,9 @@ from advent2022.rock import (
     play_score,
     total_score,
     Round,
+    decode_result,
+    choose_right,
+    total_score_strategy_guide,
 )
 
 
@@ -70,3 +73,24 @@ def test_round():
     assert Round.from_line('A Y') == Round(Rock, Paper)
     assert Round.from_line('B X') == Round(Paper, Rock)
     assert Round.from_line('C Z') == Round(Scissors, Scissors)
+
+def test_decode_result():
+    assert decode_result('X') == (Win, Lose)
+    assert decode_result('Y') == (Draw, Draw)
+    assert decode_result('Z') == (Lose, Win)
+
+def test_round_driven_by_second_column():
+    assert Round.from_line_right_drives_play('A Y') == Round(Rock, Rock)
+    assert Round.from_line_right_drives_play('B X') == Round(Paper, Rock)
+    assert Round.from_line_right_drives_play('C Z') == Round(Scissors, Rock)
+
+def test_choose_right():
+    assert choose_right(Rock, Draw) == Rock
+    assert choose_right(Paper, Lose) == Rock
+    assert choose_right(Scissors, Win) == Rock
+
+def test_total_score_is_12():
+    assert total_score(lines, line_round=Round.from_line_right_drives_play) == 12
+
+def test_total_score_strategy_guide_is_12():
+    assert total_score_strategy_guide(lines) == 12
