@@ -6,6 +6,7 @@ log = get_logger(__name__)
 from advent2022 import (
     calories,
     rock,
+    rucksacks,
 )
 
 SOLVERS = {
@@ -13,6 +14,7 @@ SOLVERS = {
     '1_2': calories.top_three_total,
     '2_1': rock.total_score,
     '2_2': rock.total_score_strategy_guide,
+    '3_1': rucksacks.sum_priorities_of_common_items,
 }
 
 
