@@ -1,6 +1,9 @@
 from collections import namedtuple
 import string
 
+from utils import get_logger
+log = get_logger(__name__)
+
 PRIORITIES = {
     letter: i + 1 for i,letter in enumerate(string.ascii_lowercase)
 }
@@ -53,3 +56,56 @@ def sum_priorities_of_common_items(lines):
     rucksacks = [Rucksack.from_line(line) for line in lines]
     common_items = _flatten(rucksak.common_items() for rucksak in rucksacks)
     return sum(item.priority for item in common_items)
+
+class Badge(Item):
+    pass
+
+class Elf(namedtuple('Elf', 'raw')):
+
+    @classmethod
+    def from_line(cls, line):
+        return cls(line)
+
+    @property
+    def items(self):
+        return self.raw
+
+class Group(namedtuple('Group', 'badge')):
+
+    @classmethod
+    def from_elves(cls, *elves):
+        assert len(elves) == 3, f"Impossible to make a Group with {len(elves)} elves"
+        elf1, elf2, elf3 = elves
+        first_set = set(item for item in elf1.items)
+        second_set = set(item for item in elf2.items)
+        third_set = set(item for item in elf3.items)
+        badges = first_set.intersection(second_set).intersection(third_set)
+        assert len(badges) == 1, f"There are {len(badges)} identical items carried by the 3 elfs"
+        return cls(Badge(badges.pop()))
+
+class _ElfGrouper:
+
+    def __init__(self, lines, n):
+        self.lines = lines
+        self.n = n
+
+    def __iter__(self):
+        group = []
+        for line in self.lines:
+            group.append(Elf.from_line(line))
+            if len(group) == self.n:
+                yield Group.from_elves(*group)
+                group = []
+
+
+def group_elves(lines, n=3):
+    assert len(lines) % n == 0, f"Impossible to make groups of {n} elves each"
+    return list(_ElfGrouper(lines, n=n))
+
+def sum_badges_priorities(*badges):
+    return sum(badge.priority for badge in badges)
+
+def sum_priorities_elf_groups(lines):
+    groups = group_elves(lines)
+    badges = (group.badge for group in groups)
+    return sum_badges_priorities(*badges)

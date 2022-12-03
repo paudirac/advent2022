@@ -15,6 +15,7 @@ SOLVERS = {
     '2_1': rock.total_score,
     '2_2': rock.total_score_strategy_guide,
     '3_1': rucksacks.sum_priorities_of_common_items,
+    '3_2': rucksacks.sum_priorities_elf_groups,
 }
 
 

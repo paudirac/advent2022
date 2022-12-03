@@ -9,6 +9,12 @@ from advent2022.rucksacks import (
     halves,
     Item,
     sum_priorities_of_common_items,
+    group_elves,
+    Elf,
+    Group,
+    Badge,
+    sum_badges_priorities,
+    sum_priorities_elf_groups,
 )
 
 example = """
@@ -95,3 +101,38 @@ def test_common_items_priorities():
 
 def test_sum_priorities_of_common_items():
     assert sum_priorities_of_common_items(lines) == 157
+
+def test_elf():
+    elf1 = Elf.from_line('vJrwpWtwJgWrhcsFMMfFFhFp')
+    elf2 = Elf.from_line('jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL')
+    elf3 = Elf.from_line('PmmdzqPrVvPwwTWBwg')
+    assert elf1 != elf2
+    assert elf2 != elf3
+    assert elf3 != elf1
+
+def test_elf_group():
+    elf1 = Elf.from_line('vJrwpWtwJgWrhcsFMMfFFhFp')
+    elf2 = Elf.from_line('jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL')
+    elf3 = Elf.from_line('PmmdzqPrVvPwwTWBwg')
+    group = Group.from_elves(elf1, elf2, elf3)
+    assert group.badge == Badge('r')
+
+    elf4 = Elf.from_line('wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn')
+    elf5 = Elf.from_line('ttgJtRGJQctTZtZT')
+    elf6 = Elf.from_line('CrZsJsPPZsGzwwsLwLmpwMDw')
+    group2 = Group.from_elves(elf4, elf5, elf6)
+    assert group2.badge == Badge('Z')
+
+def test_badge_priority():
+    assert Badge('r').priority == 18
+    assert Badge('Z').priority == 52
+
+def test_sum_badges_priorities():
+    assert sum_badges_priorities(Badge('r'), Badge('Z')) == 70
+
+def test_grups_of_trhee_elves():
+    groups = group_elves(lines)
+    assert len(groups) == 2
+
+def test_sum_priorities_elf_groups():
+    assert sum_priorities_elf_groups(lines) == 70
