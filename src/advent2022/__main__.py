@@ -7,6 +7,7 @@ from advent2022 import (
     calories,
     rock,
     rucksacks,
+    camp,
 )
 
 SOLVERS = {
@@ -16,6 +17,7 @@ SOLVERS = {
     '2_2': rock.total_score_strategy_guide,
     '3_1': rucksacks.sum_priorities_of_common_items,
     '3_2': rucksacks.sum_priorities_elf_groups,
+    '4_1': camp.count_pairs_with_overlapping_ranges,
 }
 
 

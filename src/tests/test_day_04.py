@@ -25,7 +25,7 @@ lines = read_test_input(example)
 def test_lines():
     assert len(lines) == 6
 
-def xtest_count_pairs_with_overlapping_ranges():
+def test_count_pairs_with_overlapping_ranges():
     assert count_pairs_with_overlapping_ranges(lines) == 2
 
 def test_range():
@@ -69,7 +69,7 @@ def test_pairs():
     pairs = pair_elves(lines)
     assert len(pairs) == 6
 
-def xtest_pair_fully_contained():
+def test_pair_fully_contained():
     assert not Pair.from_line("2-4,6-8").fully_contained
     assert not Pair.from_line("2-3,4-5").fully_contained
     assert not Pair.from_line("5-7,7-9").fully_contained

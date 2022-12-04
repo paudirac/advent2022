@@ -5,7 +5,10 @@ from collections import namedtuple
 log = get_logger(__name__)
 
 def count_pairs_with_overlapping_ranges(lines):
-    raise NotImplementedError()
+    pairs = pair_elves(lines)
+    return sum(
+        1 if pair.fully_contained else 0 for pair in pairs
+    )
 
 class Range(namedtuple('Range', 'spec lower upper')):
 
@@ -33,12 +36,16 @@ class Pair(namedtuple('Pair', 'left right')):
 
     @classmethod
     def from_line(cls, line):
-        left, right = line.split(',')
+        left_spec, right_spec = line.split(',')
+        left = Range.from_spec(left_spec)
+        right = Range.from_spec(right_spec)
         return cls(left, right)
 
     @property
     def fully_contained(self):
-        raise NotImplementedError()
+        left_in_right = self.left in self.right
+        right_in_left = self.right in self.left
+        return left_in_right or right_in_left
 
 def pair_elves(lines):
     return [Pair.from_line(line) for line in lines]
