@@ -9,6 +9,7 @@ from advent2022.camp import (
     Section,
     pair_elves,
     Pair,
+    count_pairs_with_some_overlapping_ranges,
 )
 
 example = """
@@ -87,3 +88,33 @@ def test_range_contains():
     range42 = Range.from_spec('3-7')
     assert range41 not in range42
     assert range42 in range41
+
+def test_empty_range_exists():
+    assert Range.from_spec("") == Range.EMPTY
+
+def test_range_intersections():
+    range11, range12 = Pair.from_line("2-4,6-8")
+    range21, range22 = Pair.from_line("2-3,4-5")
+    range31, range32 = Pair.from_line("5-7,7-9")
+    range41, range42 = Pair.from_line("2-8,3-7")
+    range51, range52 = Pair.from_line("6-6,4-6")
+    range61, range62 = Pair.from_line("2-6,4-8")
+
+    assert range11.intersect(range12) == Range.EMPTY
+    assert range12.intersect(range22) == Range.EMPTY
+    assert range31.intersect(range32) == Range.from_spec('7-7')
+    assert range41.intersect(range42) == Range.from_spec('3-7')
+    assert range51.intersect(range52) == Range.from_spec('6-6')
+    assert range61.intersect(range62) == Range.from_spec('4-6')
+
+
+def test_pairs_overlap():
+    assert not Pair.from_line("2-4,6-8").overlap
+    assert not Pair.from_line("2-3,4-5").overlap
+    assert Pair.from_line("5-7,7-9").overlap
+    assert Pair.from_line("2-8,3-7").overlap
+    assert Pair.from_line("6-6,4-6").overlap
+    assert Pair.from_line("2-6,4-8").overlap
+
+def test_count_overlapping_pairs():
+    assert count_pairs_with_some_overlapping_ranges(lines) == 4

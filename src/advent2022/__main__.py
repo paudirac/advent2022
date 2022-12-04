@@ -18,6 +18,7 @@ SOLVERS = {
     '3_1': rucksacks.sum_priorities_of_common_items,
     '3_2': rucksacks.sum_priorities_elf_groups,
     '4_1': camp.count_pairs_with_overlapping_ranges,
+    '4_2': camp.count_pairs_with_some_overlapping_ranges,
 }
 
 
