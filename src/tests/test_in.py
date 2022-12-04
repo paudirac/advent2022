@@ -40,3 +40,7 @@ def test_input_day_2():
 def test_input_day_03():
     lines = read_input(3)
     assert len(lines) == 300
+
+def test_input_day_04():
+    lines = read_input(4)
+    assert len(lines) == 1000
