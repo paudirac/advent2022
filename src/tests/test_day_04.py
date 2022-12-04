@@ -77,11 +77,11 @@ def xtest_pair_fully_contained():
     assert Pair.from_line("6-6,4-6").fully_contained
     assert not Pair.from_line("2-6,4-8").fully_contained
 
-def xtest_range_contains():
+def test_range_contains():
     range11 = Range.from_spec('2-4')
     range12 = Range.from_spec('6-8')
-    assert range1 not in range2
-    assert range2 not in range1
+    assert range11 not in range12
+    assert range12 not in range11
 
     range41 = Range.from_spec('2-8')
     range42 = Range.from_spec('3-7')

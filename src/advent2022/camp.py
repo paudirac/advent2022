@@ -24,8 +24,8 @@ class Range(namedtuple('Range', 'spec lower upper')):
             for i in range(bounds.lower, bounds.upper + 1)
         )
 
-    def __contains__(self, item): # This should be for ranges not sections
-        return True
+    def __contains__(self, item: 'Range'):
+        return self.lower <= item.lower and item.upper <= self.upper
 
 Section = namedtuple('Section', 'id')
 
