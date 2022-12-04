@@ -20,12 +20,12 @@ class Range(namedtuple('Range', 'spec lower upper')):
 
     def display(self, bounds):
         return ''.join(
-            'X' if i in self else '.'
+            'X' if self.lower <= i <= self.upper else '.'
             for i in range(bounds.lower, bounds.upper + 1)
         )
 
     def __contains__(self, item): # This should be for ranges not sections
-        return self.lower <= item <= self.upper
+        return True
 
 Section = namedtuple('Section', 'id')
 
