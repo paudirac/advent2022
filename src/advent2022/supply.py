@@ -73,10 +73,6 @@ class Crane:
 
     def apply(self, move):
         raise NotImplementedError()
-        # qty, from_, to_ = move
-        # for _ in range(qty):
-        #     crate = self.stacks[from_ - 1].pop()
-        #     self.stacks[to_ - 1].append(crate)
 
     def load(self, n, crate):
         self.stacks[n - 1].append(crate)
@@ -90,7 +86,7 @@ class Crane:
         return f"Crane({self.stacks})"
 
 class CrateMover9000(Crane):
-    """Can move only one create a ta time"""
+    """Can move only one create at a time"""
 
     def apply(self, move):
         qty, from_, to_ = move
@@ -99,7 +95,7 @@ class CrateMover9000(Crane):
             self.stacks[to_ - 1].append(crate)
 
 class CrateMover9001(Crane):
-    """Can move only one create a ta time"""
+    """Can move more than one create at a time"""
 
     def apply(self, move):
         qty, from_, to_ = move
