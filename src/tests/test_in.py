@@ -1,4 +1,5 @@
-from utils import read_input, get_logger, read_test_input
+import tempfile
+from utils import read_input, get_logger, read_test_input, Input
 log = get_logger(__name__)
 
 def test_can_read_input():
@@ -44,3 +45,13 @@ def test_input_day_03():
 def test_input_day_04():
     lines = read_input(4)
     assert len(lines) == 1000
+
+def test_input_strip():
+    with tempfile.NamedTemporaryFile(mode="w+t") as f:
+        f.write(""" 1   2   3   4   5   6   7   8   9
+""")
+        f.flush()
+        input_object = read_input(42)
+        input_object.filename = f.name
+        lines = list(iter(input_object))
+        assert lines[0] == " 1   2   3   4   5   6   7   8   9"
