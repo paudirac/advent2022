@@ -24,6 +24,14 @@ class Move(namedtuple('Move', 'qty from_ to_')):
 def read_moves(lines):
     return [Move.from_line(line) for line in lines if _is_move(line)]
 
+def read_initial_crane_config_section(lines):
+    lns = []
+    for line in lines:
+        if len(line) == 0:
+            break
+        lns.append(line)
+    return lns
+
 class Crate(namedtuple('Crate', 'name')):
 
     def __str__(self):

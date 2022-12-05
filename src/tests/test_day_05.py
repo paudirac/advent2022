@@ -8,6 +8,7 @@ from advent2022.supply import (
     Stack,
     Crane,
     message_after_apply_steps,
+    read_initial_crane_config_section,
 )
 
 example = """
@@ -111,3 +112,7 @@ def test_message_after_apply_steps():
     stack_3 = Stack(3, P)
     crane = Crane(stack_1, stack_2, stack_3)
     assert message_after_apply_steps(lines, crane=crane) == 'CMZ'
+
+def test_initial_crane_config_section():
+    config_lines = read_initial_crane_config_section(lines)
+    assert len(config_lines) == 4
