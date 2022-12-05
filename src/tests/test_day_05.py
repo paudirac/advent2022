@@ -11,6 +11,7 @@ from advent2022.supply import (
     read_initial_crane_config_section,
     read_crane,
     top_crates_9000,
+    top_crates_9001,
 )
 
 example = """
@@ -111,6 +112,32 @@ def test_crane_move_9000():
     crane.apply(step_4)
     assert crane.top_crates == [C, M, Z]
 
+def test_crane_move_9001():
+    stack_1 = Stack(1, Z, N)
+    stack_2 = Stack(2, M, C, D)
+    stack_3 = Stack(3, P)
+
+    Crane = crane_model(9001)
+    crane = Crane(stack_1, stack_2, stack_3)
+    assert crane.top_crates == [N, D, P]
+
+    step_1 = Move(qty=1, from_=2, to_=1)
+    crane.apply(step_1)
+    assert crane.top_crates == [D, C, P]
+
+    step_2 = Move(qty=3, from_=1, to_=3)
+    crane.apply(step_2)
+    assert crane.top_crates == [None, C, D]
+
+    step_3 = Move(qty=2, from_=2, to_=1)
+    crane.apply(step_3)
+    assert crane.top_crates == [C, None, D]
+
+    step_4 = Move(qty=1, from_=1, to_=2)
+    crane.apply(step_4)
+    assert crane.top_crates == [M, C, D]
+
+
 def test_message_after_apply_steps_9000():
     stack_1 = Stack(1, Z, N)
     stack_2 = Stack(2, M, C, D)
@@ -153,3 +180,6 @@ def test_read_creane():
 
 def test_top_creates_9000():
     assert top_crates_9000(lines) == 'CMZ'
+
+def test_top_creates_9001():
+    assert top_crates_9001(lines) == 'MCD'

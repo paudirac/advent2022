@@ -20,7 +20,8 @@ SOLVERS = {
     '3_2': rucksacks.sum_priorities_elf_groups,
     '4_1': camp.count_pairs_with_overlapping_ranges,
     '4_2': camp.count_pairs_with_some_overlapping_ranges,
-    '5_1': supply.top_crates,
+    '5_1': supply.top_crates_9000,
+    '5_2': supply.top_crates_9001,
 }
 
 

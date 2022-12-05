@@ -98,9 +98,24 @@ class CrateMover9000(Crane):
             crate = self.stacks[from_ - 1].pop()
             self.stacks[to_ - 1].append(crate)
 
+class CrateMover9001(Crane):
+    """Can move only one create a ta time"""
+
+    def apply(self, move):
+        qty, from_, to_ = move
+        tmp = deque()
+        for _ in range(qty):
+            crate = self.stacks[from_ - 1].pop()
+            tmp.append(crate)
+        for _ in range(qty):
+            crate = tmp.pop()
+            self.stacks[to_ - 1].append(crate)
+
+
 def crane_model(model):
     return {
         9000: CrateMover9000,
+        9001: CrateMover9001,
     }[model]
 
 def message_after_apply_steps(lines, crane: Crane):
@@ -143,3 +158,6 @@ def top_crates(lines, model):
 
 def top_crates_9000(lines):
     return top_crates(lines, model=9000)
+
+def top_crates_9001(lines):
+    return top_crates(lines, model=9001)
