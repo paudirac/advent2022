@@ -9,6 +9,8 @@ from advent2022.supply import (
     Crane,
     message_after_apply_steps,
     read_initial_crane_config_section,
+    read_crane,
+    top_crates,
 )
 
 example = """
@@ -44,6 +46,7 @@ def test_read_moves():
 
 def test_crates():
     assert ''.join(map(str, [C, M, Z])) == 'CMZ'
+
 
 
 def test_stack():
@@ -116,3 +119,32 @@ def test_message_after_apply_steps():
 def test_initial_crane_config_section():
     config_lines = read_initial_crane_config_section(lines)
     assert len(config_lines) == 4
+
+
+def test_empty_stack():
+    stack = Stack(1)
+    assert stack is not None
+    assert stack.top == None
+
+def test_crane_from_spec():
+    crane = Crane.from_spec(' 1   2   3')
+    assert len(crane.stacks) == 3
+
+def test_crane_load():
+    crane = Crane.from_spec(' 1   2   3')
+    assert crane.top_crates == [None, None, None]
+    crane.load(1, Z)
+    assert crane.top_crates == [Z, None, None]
+    crane.load(2, M)
+    assert crane.top_crates == [Z, M, None]
+
+def test_read_creane():
+    config_lines = read_initial_crane_config_section(lines)
+    crane = read_crane(config_lines)
+    assert crane.top_crates == [N, D, P]
+    assert list(crane.stacks[0]) == [Z, N]
+    assert list(crane.stacks[1]) == [M, C, D]
+    assert list(crane.stacks[2]) == [P]
+
+def test_top_creates():
+    assert top_crates(lines) == 'CMZ'
