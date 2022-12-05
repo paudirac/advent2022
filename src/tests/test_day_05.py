@@ -6,11 +6,11 @@ from advent2022.supply import (
     Move,
     Crate,
     Stack,
-    Crane,
+    crane_model,
     message_after_apply_steps,
     read_initial_crane_config_section,
     read_crane,
-    top_crates,
+    top_crates_9000,
 )
 
 example = """
@@ -81,15 +81,17 @@ def test_crane():
     stack_2 = Stack(2, M, C, D)
     stack_3 = Stack(3, P)
 
+    Crane = crane_model(9000)
     crane = Crane(stack_1, stack_2, stack_3)
     assert len(crane) == 3
     assert crane.top_crates == [N, D, P]
 
-def test_crane_move():
+def test_crane_move_9000():
     stack_1 = Stack(1, Z, N)
     stack_2 = Stack(2, M, C, D)
     stack_3 = Stack(3, P)
 
+    Crane = crane_model(9000)
     crane = Crane(stack_1, stack_2, stack_3)
     assert crane.top_crates == [N, D, P]
 
@@ -109,10 +111,11 @@ def test_crane_move():
     crane.apply(step_4)
     assert crane.top_crates == [C, M, Z]
 
-def test_message_after_apply_steps():
+def test_message_after_apply_steps_9000():
     stack_1 = Stack(1, Z, N)
     stack_2 = Stack(2, M, C, D)
     stack_3 = Stack(3, P)
+    Crane = crane_model(9000)
     crane = Crane(stack_1, stack_2, stack_3)
     assert message_after_apply_steps(lines, crane=crane) == 'CMZ'
 
@@ -126,11 +129,13 @@ def test_empty_stack():
     assert stack is not None
     assert stack.top == None
 
-def test_crane_from_spec():
+def test_crane_from_spec_9000():
+    Crane = crane_model(9000)
     crane = Crane.from_spec(' 1   2   3')
     assert len(crane.stacks) == 3
 
 def test_crane_load():
+    Crane = crane_model(9000)
     crane = Crane.from_spec(' 1   2   3')
     assert crane.top_crates == [None, None, None]
     crane.load(1, Z)
@@ -146,5 +151,5 @@ def test_read_creane():
     assert list(crane.stacks[1]) == [M, C, D]
     assert list(crane.stacks[2]) == [P]
 
-def test_top_creates():
-    assert top_crates(lines) == 'CMZ'
+def test_top_creates_9000():
+    assert top_crates_9000(lines) == 'CMZ'

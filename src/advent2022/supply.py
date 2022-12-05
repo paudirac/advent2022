@@ -72,10 +72,11 @@ class Crane:
         return [stack.top for stack in self.stacks]
 
     def apply(self, move):
-        qty, from_, to_ = move
-        for _ in range(qty):
-            crate = self.stacks[from_ - 1].pop()
-            self.stacks[to_ - 1].append(crate)
+        raise NotImplementedError()
+        # qty, from_, to_ = move
+        # for _ in range(qty):
+        #     crate = self.stacks[from_ - 1].pop()
+        #     self.stacks[to_ - 1].append(crate)
 
     def load(self, n, crate):
         self.stacks[n - 1].append(crate)
@@ -88,6 +89,20 @@ class Crane:
     def __repr__(self):
         return f"Crane({self.stacks})"
 
+class CrateMover9000(Crane):
+    """Can move only one create a ta time"""
+
+    def apply(self, move):
+        qty, from_, to_ = move
+        for _ in range(qty):
+            crate = self.stacks[from_ - 1].pop()
+            self.stacks[to_ - 1].append(crate)
+
+def crane_model(model):
+    return {
+        9000: CrateMover9000,
+    }[model]
+
 def message_after_apply_steps(lines, crane: Crane):
     steps = read_moves(lines)
     for step in steps:
@@ -99,9 +114,10 @@ def _flatten(list_of_lists):
                      for item in inner_list]
 
 
-def read_crane(lines):
+def read_crane(lines, model=9000):
     bottom_to_top = list(reversed(lines))
-    crane = Crane.from_spec(bottom_to_top[0])
+    crane_type = crane_model(model)
+    crane = crane_type.from_spec(bottom_to_top[0])
     indexes = {
         i: None if n == ' ' else int(n) for i, n in enumerate(bottom_to_top[0])
     }
@@ -119,8 +135,11 @@ def read_crane(lines):
         crane.load(*load)
     return crane
 
-def top_crates(lines):
+def top_crates(lines, model):
     lines = list(lines)
     config = read_initial_crane_config_section(lines)
-    crane = read_crane(config)
+    crane = read_crane(config, model=model)
     return message_after_apply_steps(lines, crane=crane)
+
+def top_crates_9000(lines):
+    return top_crates(lines, model=9000)
