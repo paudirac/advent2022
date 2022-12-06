@@ -9,6 +9,7 @@ from advent2022 import (
     rucksacks,
     camp,
     supply,
+    tuning,
 )
 
 SOLVERS = {
@@ -22,6 +23,7 @@ SOLVERS = {
     '4_2': camp.count_pairs_with_some_overlapping_ranges,
     '5_1': supply.top_crates_9000,
     '5_2': supply.top_crates_9001,
+    '6_1': tuning.start_of_packet,
 }
 
 
