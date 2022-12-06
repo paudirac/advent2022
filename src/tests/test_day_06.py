@@ -9,6 +9,7 @@ from advent2022.tuning import (
     chunks,
     first_different_chunk,
     start_of_packet,
+    start_of_marker,
 )
 
 
@@ -111,6 +112,15 @@ def test_first_different_chunk():
     assert first_different_chunk(cks) == Chunk('jpqm', 3)
     assert first_different_chunk(cks).end == 7
 
+    cks = chunks("mjqjpqmgbljsphdztnvjfqwrcgsmlb", length=14)
+    first = first_different_chunk(cks)
+    assert first.end == 19
+    # print(f'{first.all_different=}')
+    # print(first)
+    # assert first_different_chunk(cks) == Chunk('jpqm', 3)
+    # assert first_different_chunk(cks).end == 7
+
+
 example_2 = """
 bvwbjplbgvbhsrlpgdmjqwftvncz
 """
@@ -137,3 +147,10 @@ def test_start_of_packet():
     assert start_of_packet(example_3_lines) == 6
     assert start_of_packet(example_4_lines) == 10
     assert start_of_packet(example_5_lines) == 11
+
+def test_start_of_marker():
+    assert start_of_marker(example_1_lines) == 19
+    assert start_of_marker(example_2_lines) == 23
+    assert start_of_marker(example_3_lines) == 23
+    assert start_of_marker(example_4_lines) == 29
+    assert start_of_marker(example_5_lines) == 26

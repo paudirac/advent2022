@@ -55,3 +55,9 @@ def start_of_packet(lines):
     cks = chunks(stream)
     packet_start = first_different_chunk(cks)
     return packet_start.end
+
+def start_of_marker(lines):
+    stream = datastream(lines)
+    cks = chunks(stream, length=14)
+    marker_start = first_different_chunk(cks)
+    return marker_start.end
