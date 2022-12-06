@@ -9,7 +9,7 @@ from advent2022.tuning import (
     chunks,
     first_different_chunk,
     start_of_packet,
-    start_of_marker,
+    start_of_message,
 )
 
 
@@ -149,8 +149,8 @@ def test_start_of_packet():
     assert start_of_packet(example_5_lines) == 11
 
 def test_start_of_marker():
-    assert start_of_marker(example_1_lines) == 19
-    assert start_of_marker(example_2_lines) == 23
-    assert start_of_marker(example_3_lines) == 23
-    assert start_of_marker(example_4_lines) == 29
-    assert start_of_marker(example_5_lines) == 26
+    assert start_of_message(example_1_lines) == 19
+    assert start_of_message(example_2_lines) == 23
+    assert start_of_message(example_3_lines) == 23
+    assert start_of_message(example_4_lines) == 29
+    assert start_of_message(example_5_lines) == 26

@@ -24,7 +24,7 @@ SOLVERS = {
     '5_1': supply.top_crates_9000,
     '5_2': supply.top_crates_9001,
     '6_1': tuning.start_of_packet,
-    '6_2': tuning.start_of_marker,
+    '6_2': tuning.start_of_message,
 }
 
 
