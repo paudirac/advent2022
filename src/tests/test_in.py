@@ -55,3 +55,7 @@ def test_input_strip():
         input_object.filename = f.name
         lines = list(iter(input_object))
         assert lines[0] == " 1   2   3   4   5   6   7   8   9"
+
+def test_input_day_07():
+    lines = read_input(7)
+    assert len(lines) == 988
