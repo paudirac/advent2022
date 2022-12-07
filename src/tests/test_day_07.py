@@ -40,3 +40,5 @@ def test_test_input():
 def test_file():
     assert File.from_line("14848514 b.txt").name == 'b.txt'
     assert File.from_line("14848514 b.txt").size == 14848514
+    assert File.from_line("8504156 c.dat").name == 'c.dat'
+    assert File.from_line("8504156 c.dat").size == 8504156
