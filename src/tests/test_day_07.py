@@ -2,6 +2,9 @@ import pytest
 from utils import read_input, get_logger, read_test_input
 log = get_logger(__name__)
 
+from advent2022.device import (
+    File,
+)
 
 example = """
 $ cd /
