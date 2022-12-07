@@ -3,9 +3,6 @@ from utils import read_input, get_logger, read_test_input
 log = get_logger(__name__)
 
 from advent2022.device import (
-    File,
-    Dir,
-    RootDir,
     read_line,
     Command,
     Output,
@@ -43,15 +40,6 @@ lines = read_test_input(example)
 
 def test_test_input():
     assert len(lines) == 23
-
-def test_outermost_directory():
-    assert RootDir.name == '/'
-
-def test_file():
-    assert File.from_line("14848514 b.txt").name == 'b.txt'
-    assert File.from_line("14848514 b.txt").size == 14848514
-    assert File.from_line("8504156 c.dat").name == 'c.dat'
-    assert File.from_line("8504156 c.dat").size == 8504156
 
 def test_read_line():
     assert read_line("$ cd /") == Command('cd', ['/'])
