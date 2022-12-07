@@ -33,3 +33,7 @@ $ ls
 def test_test_input():
     lines = read_test_input(example)
     assert len(lines) == 23
+
+def test_file():
+    assert File.from_line("14848514 b.txt").name == 'b.txt'
+    assert File.from_line("14848514 b.txt").size == 14848514
