@@ -7,6 +7,7 @@ from advent2022.device import (
     Command,
     Output,
     read_terminal,
+    File,
 )
 
 example = """
@@ -72,3 +73,7 @@ def test_read_terminal():
         Output("5626152 d.ext"),
         Output("7214296 k"),
     ]
+
+def test_files_are_plain_data():
+    assert File.from_spec(Output("14848514 b.txt").raw) == File(name="b.txt", size=14848514)
+    assert File.from_spec(Output("14848514 b.txt").raw) != File.from_spec(Output("8504156 c.dat").raw)
