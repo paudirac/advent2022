@@ -10,6 +10,7 @@ from advent2022 import (
     camp,
     supply,
     tuning,
+    device,
 )
 
 SOLVERS = {
@@ -25,6 +26,7 @@ SOLVERS = {
     '5_2': supply.top_crates_9001,
     '6_1': tuning.start_of_packet,
     '6_2': tuning.start_of_message,
+    '7_1': device.sum_dirs_with_at_most_100000,
 }
 
 
