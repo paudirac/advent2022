@@ -61,3 +61,41 @@ def test_visible_edges():
     assert hm[(2, 4)].visible(hm) == True
     assert hm[(3, 4)].visible(hm) == True
     assert hm[(4, 4)].visible(hm) == True
+
+def test_left():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm[(1, 1)].left(hm) == [
+        hm[(0, 1)],
+    ]
+
+def test_right():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm[(1, 1)].right(hm) == [
+        hm[(2, 1)],
+        hm[(3, 1)],
+        hm[(4, 1)],
+    ]
+
+def test_top():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm[(1, 1)].top(hm) == [
+        hm[(1, 0)],
+    ]
+
+def bottom():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm[(1, 1)].bottom(hm) == [
+        hm[(1, 2)],
+        hm[(1, 3)],
+        hm[(1, 4)],
+    ]
+
+# def test_visible_from_left():
+#     hm = height_map(lines)
+
+#     # top left 5 (1, 1)
+#     assert hm.visible_from_left(hm[(1, 1)])
