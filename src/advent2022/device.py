@@ -80,7 +80,6 @@ class FilesystemBuilder:
                 log.warning(f'Unable to apply {command=}')
 
     def _build(self, raw):
-        log.debug(f'building {raw=}')
         match raw.split():
             case ["dir", dir_name]:
                 self._build_dir(dir_name)
@@ -107,7 +106,6 @@ class FilesystemBuilder:
             dest = self.current_dir.get(dir_name)
             assert dest is not None, f"Can't change to {dir_name}, not in current: {self.current_dir.name}"
             self._visited_dirs.append(dest)
-        log.debug(f"cd'd to {dir_name}")
 
     @property
     def current_dir(self):
@@ -119,7 +117,6 @@ class FilesystemBuilder:
 
 def filesystem(lines):
     commands = read_terminal(lines)
-    log.debug(f'{commands=}')
     fsb = FilesystemBuilder()
     for command in commands:
         fsb.apply(command)
@@ -131,3 +128,30 @@ def sum_dirs_with_at_most_100000(lines):
         return d.is_dir and d.size <= 100000
     dirs = walk(root, condition=dir_with_at_most_100000)
     return sum(d.size for d in dirs)
+
+
+TOTAL_DISK_SPACE_AVAILABLE = 70000000
+UPDATE_SPACE_NEEDED = 30000000
+
+
+def used(fs):
+    return fs.size
+
+def unused(fs, total=TOTAL_DISK_SPACE_AVAILABLE):
+    unused_space = total - used(fs)
+    assert unused_space >= 0, f"More space used ({used(fs)})than available ({total})"
+    return unused_space
+
+def space_needed_to_be_freed(fs, required):
+    unused_space = unused(fs)
+    yet_to_be_freed = required - unused_space
+    return yet_to_be_freed if yet_to_be_freed > 0 else 0
+
+def smallest_dir_to_delte_size(lines):
+    fs = filesystem(lines)
+    least_size = space_needed_to_be_freed(fs, required=UPDATE_SPACE_NEEDED)
+    def dir_with_least_size(d):
+        return d.is_dir and d.size >= least_size
+    candidates = walk(fs, condition=dir_with_least_size)
+    sorted_candidates = sorted(candidates, key=lambda d: d.size)
+    return sorted_candidates[0].size

@@ -13,6 +13,12 @@ from advent2022.device import (
     filesystem,
     FilesystemBuilder,
     sum_dirs_with_at_most_100000,
+    TOTAL_DISK_SPACE_AVAILABLE,
+    UPDATE_SPACE_NEEDED,
+    space_needed_to_be_freed,
+    used,
+    unused,
+    smallest_dir_to_delte_size,
 )
 
 example = """
@@ -222,3 +228,32 @@ def test_filesystem():
 
 def test_sum_dirs_with_at_most_100000():
     assert sum_dirs_with_at_most_100000(lines) == 95437
+
+def test_total_disk_space_available():
+    assert TOTAL_DISK_SPACE_AVAILABLE == 70000000
+
+def test_update_space_needed():
+    assert UPDATE_SPACE_NEEDED == 30000000
+
+def test_used_space():
+    fs = filesystem(lines)
+    assert used(fs) == 48381165
+
+def test_unused():
+    fs = filesystem(lines)
+    assert unused(fs) == 21618835
+
+def test_space_needed_to_free():
+    fs = filesystem(lines)
+    assert space_needed_to_be_freed(fs, required=UPDATE_SPACE_NEEDED) == 8381165
+
+def test_directory_big_enough():
+    least_size = 8381165
+    fs = filesystem(lines)
+    def dir_with_least_size(d):
+        return d.is_dir and d.size >= least_size
+    candidates = walk(fs, condition=dir_with_least_size)
+    assert set(d.name for d in candidates) == set(['d', '/'])
+
+def test_smallest_dir_to_delete_size():
+    assert smallest_dir_to_delte_size(lines) == 24933642
