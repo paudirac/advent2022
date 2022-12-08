@@ -144,6 +144,7 @@ def test_find_dir():
 
 def test_filesystem_builder():
     fsb = FilesystemBuilder()
+    assert not fsb.building
     fsb.apply(read_line("$ cd /"))
     assert fsb.current_dir == Dir('/')
     fsb.apply(read_line("$ cd a"))

@@ -65,6 +65,7 @@ class FilesystemBuilder:
 
     def __init__(self):
         self._visited_dirs = deque()
+        self.building = False
 
     def apply(self, command):
         match command:
@@ -74,13 +75,16 @@ class FilesystemBuilder:
                 log.debug(f'Unable to apply {command=}')
 
     def _change_dir(self, dir_name):
-        log.debug(f'cd to {dir_name}')
         if dir_name == '..':
             self._visited_dirs.pop()
-        else:
+        elif dir_name == '/':
+            assert len(self._visited_dirs) == 0, "Unable to change to /"
             dest = Dir(dir_name)
             self._visited_dirs.append(dest)
-        log.debug(f'{self.current_dir=}')
+        else:
+            dest = self.current_dir.get(dir_name)
+            assert dest is not None, f"Can't change to {dir_name}, not in current: {self.current_dir.name}"
+            self._visited_dirs.append(dest)
 
     @property
     def current_dir(self):
