@@ -12,6 +12,7 @@ from advent2022.device import (
     walk,
     filesystem,
     FilesystemBuilder,
+    sum_dirs_with_at_most_100000,
 )
 
 example = """
@@ -210,3 +211,14 @@ $ ls
 584 i
 """)
     assert filesystem(lns).name == dir_a.name
+
+def test_filesystem():
+   fs = filesystem(lines)
+   assert len(fs) == 4
+   assert fs['a']['e'].size == 584
+   assert fs['a'].size == 94853
+   assert fs['d'].size == 24933642
+   assert fs.size == 48381165
+
+def test_sum_dirs_with_at_most_100000():
+    assert sum_dirs_with_at_most_100000(lines) == 95437

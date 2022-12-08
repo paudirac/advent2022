@@ -124,3 +124,10 @@ def filesystem(lines):
     for command in commands:
         fsb.apply(command)
     return fsb.root
+
+def sum_dirs_with_at_most_100000(lines):
+    root = filesystem(lines)
+    def dir_with_at_most_100000(d):
+        return d.is_dir and d.size <= 100000
+    dirs = walk(root, condition=dir_with_at_most_100000)
+    return sum(d.size for d in dirs)
