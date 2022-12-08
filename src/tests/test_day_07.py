@@ -8,6 +8,8 @@ from advent2022.device import (
     Output,
     read_terminal,
     File,
+    Dir,
+    walk,
 )
 
 example = """
@@ -77,3 +79,59 @@ def test_read_terminal():
 def test_files_are_plain_data():
     assert File.from_spec(Output("14848514 b.txt").raw) == File(name="b.txt", size=14848514)
     assert File.from_spec(Output("14848514 b.txt").raw) != File.from_spec(Output("8504156 c.dat").raw)
+
+def test_dir_is_a_tree_of_files():
+    dir_a = Dir(
+        "a",
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+        File.from_spec("62596 h.lst"),
+    )
+    assert len(dir_a) == 3
+    assert dir_a.size == 129116 + 2557 + 62596
+
+def test_dir_is_a_tree_of_files_or_dirs():
+    dir_e = Dir(
+        "e",
+        File.from_spec("584 i")
+    )
+    dir_a = Dir(
+        "a",
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+        File.from_spec("62596 h.lst"),
+        dir_e,
+    )
+    assert len(dir_a) == 4
+    assert dir_a.size == 129116 + 2557 + 62596 + dir_e.size
+
+def test_find_dir():
+    dir_e = Dir(
+        "e",
+        File.from_spec("584 i")
+    )
+    dir_a = Dir(
+        "a",
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+        File.from_spec("62596 h.lst"),
+        dir_e,
+    )
+    dirs = walk(dir_a, condition=lambda c: c.is_dir)
+    assert dirs == [dir_a, dir_e]
+
+    files = walk(dir_a, condition=lambda c: not c.is_dir)
+    assert files == [
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+        File.from_spec("62596 h.lst"),
+        File.from_spec("584 i"),
+    ]
+
+    def file_gt_3000(f):
+        return not f.is_dir and f.size > 3000
+    files_gt_3000 = walk(dir_a, condition=file_gt_3000)
+    assert files_gt_3000 == [
+        File.from_spec("129116 f"),
+        File.from_spec("62596 h.lst"),
+    ]
