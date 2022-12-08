@@ -4,6 +4,8 @@ log = get_logger(__name__)
 
 from advent2022.forest import (
     height_map,
+    Tree,
+    count_visible_trees,
 )
 
 example = """
@@ -94,8 +96,49 @@ def bottom():
         hm[(1, 4)],
     ]
 
-# def test_visible_from_left():
-#     hm = height_map(lines)
+def test_less_than():
+    t1 = Tree(object(), 5)
+    t2 = Tree(object(), 4)
+    assert t2 < t1
 
-#     # top left 5 (1, 1)
-#     assert hm.visible_from_left(hm[(1, 1)])
+def test_visible_from_left():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm.visible_from_left(hm[(1, 1)])
+
+def test_visible_from_top():
+    hm = height_map(lines)
+    # top left 5 (1, 1)
+    assert hm.visible_from_top(hm[(1, 1)])
+
+def test_visible_from_right():
+    hm = height_map(lines)
+    # left-middle 5 (1, 2)
+    assert hm.visible_from_right(hm[(1, 2)])
+
+    assert not hm.visible_from_right(hm[(1, 1)])
+
+def test_visible_from_bottom():
+    hm = height_map(lines)
+    # bottom-middle 5 (2, 3)
+    assert hm.visible_from_bottom(hm[(2, 3)])
+
+    assert not hm.visible_from_bottom(hm[(1, 1)])
+
+def test_visible():
+    hm = height_map(lines)
+
+    assert hm[(1, 1)].visible(hm)
+    assert hm[(1, 2)].visible(hm)
+    assert hm[(2, 3)].visible(hm)
+
+    # top-right 1 (3, 1)
+    assert not hm[(3, 1)].visible(hm)
+
+def test_visible_trees():
+    hm = height_map(lines)
+    visible = hm.visible_trees
+    assert len(hm.visible_trees) == 21
+
+def test_count_visible_trees():
+    assert count_visible_trees(lines) == 21

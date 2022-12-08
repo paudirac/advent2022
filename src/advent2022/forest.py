@@ -7,11 +7,11 @@ Index = namedtuple('Index', 'i j')
 class Tree(namedtuple('Tree', 'index height')):
 
     def visible(self, hm: 'HeigtMap'):
-        return hm.edge(self)
-
-    def right_of(self, tree):
-        index, _ = tree
-        return index.i < self.index.i
+        return (hm.edge(self) or
+                hm.visible_from_left(self) or
+                hm.visible_from_right(self) or
+                hm.visible_from_top(self) or
+                hm.visible_from_bottom(self))
 
     def left(self, hm: 'HeigtMap'):
         return [hm[(i, self.index.j)] for i in range(0, self.index.i)]
@@ -27,6 +27,11 @@ class Tree(namedtuple('Tree', 'index height')):
 
     def __repr__(self):
         return f'Tree([{self.index.i}, {self.index.j}], {self.height})'
+
+    def __lt__(self, other):
+        if not isinstance(other, Tree):
+            raise TypeError(f'Invalid type for {other}: {type(other)}, expecting Tree')
+        return self.height < other.height
 
 
 class HeightMap(dict):
@@ -55,8 +60,28 @@ class HeightMap(dict):
         return i in [0, I - 1] or j in [0, J - 1]
 
     def visible_from_left(self, tree: Tree):
-        return all(tree.right_of(t) and tree > t for t in self.items())
+        left = tree.left(self)
+        return all(t < tree for t in left)
 
+    def visible_from_top(self, tree: Tree):
+        top = tree.top(self)
+        return all(t < tree for t in top)
+
+    def visible_from_right(self, tree: Tree):
+        right = tree.right(self)
+        return all(t < tree for t in right)
+
+    def visible_from_bottom(self, tree: Tree):
+        bottom = tree.bottom(self)
+        return all(t < tree for t in bottom)
+
+    @property
+    def visible_trees(self):
+        return [t for t in self.values() if t.visible(self)]
 
 def height_map(lines):
     return HeightMap.from_lines(lines)
+
+def count_visible_trees(lines):
+    hm = height_map(lines)
+    return len(hm.visible_trees)

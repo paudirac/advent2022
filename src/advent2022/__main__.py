@@ -11,6 +11,7 @@ from advent2022 import (
     supply,
     tuning,
     device,
+    forest,
 )
 
 SOLVERS = {
@@ -28,6 +29,7 @@ SOLVERS = {
     '6_2': tuning.start_of_message,
     '7_1': device.sum_dirs_with_at_most_100000,
     '7_2': device.smallest_dir_to_delte_size,
+    '8_1': forest.count_visible_trees,
 }
 
 
