@@ -30,6 +30,7 @@ SOLVERS = {
     '7_1': device.sum_dirs_with_at_most_100000,
     '7_2': device.smallest_dir_to_delte_size,
     '8_1': forest.count_visible_trees,
+    '8_2': forest.max_scenic_score,
 }
 
 

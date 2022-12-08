@@ -4,6 +4,14 @@ log = get_logger(__name__)
 
 Index = namedtuple('Index', 'i j')
 
+def take_until(seq, condition):
+    result = []
+    for item in seq:
+        result.append(item)
+        if condition(item):
+            break
+    return result
+
 class Tree(namedtuple('Tree', 'index height')):
 
     def visible(self, hm: 'HeigtMap'):
@@ -34,8 +42,14 @@ class Tree(namedtuple('Tree', 'index height')):
         return self.height < other.height
 
     def scenic_score(self, hm: 'HeightMap'):
-        pass
-        #left = [l for ]
+        def can_see(tree):
+            return tree.height >= self.height
+        left = take_until(self.left(hm), can_see)
+        right = take_until(self.right(hm), can_see)
+        top = take_until(self.top(hm), can_see)
+        bottom = take_until(self.bottom(hm), can_see)
+        return len(left) * len(right) * len(top) * len(bottom)
+
 
 class HeightMap(dict):
 
@@ -88,3 +102,7 @@ def height_map(lines):
 def count_visible_trees(lines):
     hm = height_map(lines)
     return len(hm.visible_trees)
+
+def max_scenic_score(lines):
+    hm = height_map(lines)
+    return max(t.scenic_score(hm) for t in hm.values())

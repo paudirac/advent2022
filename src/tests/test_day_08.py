@@ -6,6 +6,8 @@ from advent2022.forest import (
     height_map,
     Tree,
     count_visible_trees,
+    take_until,
+    max_scenic_score,
 )
 
 example = """
@@ -142,3 +144,19 @@ def test_visible_trees():
 
 def test_count_visible_trees():
     assert count_visible_trees(lines) == 21
+
+def test_take_until():
+    assert take_until([1, 2, 3, 4, 5, 6, 7, 8], lambda x: x >= 5) == [1, 2, 3, 4, 5]
+
+def test_tree_scenic_score():
+    hm = height_map(lines)
+    # middle-5 in second row
+    middle_5_2n_row = hm[(2, 1)]
+    assert middle_5_2n_row.scenic_score(hm) == 4
+
+    # middle-5 in fourth row
+    middle_5_4th = hm[(2, 3)]
+    assert middle_5_4th.scenic_score(hm) == 8
+
+def test_max_scenic_score():
+    assert max_scenic_score(lines) == 8
