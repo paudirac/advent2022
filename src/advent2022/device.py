@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, deque
 from utils import get_logger
 log = get_logger(__name__)
 
@@ -45,6 +45,12 @@ class Dir(dict):
     def __repr__(self):
         return f'Dir("{self.name}", size={self.size})'
 
+    def __eq__(self, other):
+        if not isinstance(other, Dir):
+            return False
+        return self.name == other.name
+
+
 def walk(root, condition, found=None):
     if found is None:
         found = []
@@ -54,3 +60,35 @@ def walk(root, condition, found=None):
         for k, v in root.items():
             walk(v, condition=condition, found=found)
     return found
+
+class FilesystemBuilder:
+
+    def __init__(self):
+        self._visited_dirs = deque()
+
+    def apply(self, command):
+        match command:
+            case Command("cd", [dir_name, *rest]):
+                self._change_dir(dir_name)
+            case _:
+                log.debug(f'Unable to apply {command=}')
+
+    def _change_dir(self, dir_name):
+        log.debug(f'cd to {dir_name}')
+        if dir_name == '..':
+            self._visited_dirs.pop()
+        else:
+            dest = Dir(dir_name)
+            self._visited_dirs.append(dest)
+        log.debug(f'{self.current_dir=}')
+
+    @property
+    def current_dir(self):
+        return self._visited_dirs[-1] if len(self._visited_dirs) > 0 else None
+
+def filesystem(lines):
+    commands = read_terminal(lines)
+    for command in commands:
+        pass
+
+    return None

@@ -10,6 +10,8 @@ from advent2022.device import (
     File,
     Dir,
     walk,
+    filesystem,
+    FilesystemBuilder,
 )
 
 example = """
@@ -80,6 +82,10 @@ def test_files_are_plain_data():
     assert File.from_spec(Output("14848514 b.txt").raw) == File(name="b.txt", size=14848514)
     assert File.from_spec(Output("14848514 b.txt").raw) != File.from_spec(Output("8504156 c.dat").raw)
 
+def test_dir_is_equal_by_name():
+    assert Dir('a') == Dir('a')
+    assert not Dir('a') == Dir('b')
+
 def test_dir_is_a_tree_of_files():
     dir_a = Dir(
         "a",
@@ -135,3 +141,39 @@ def test_find_dir():
         File.from_spec("129116 f"),
         File.from_spec("62596 h.lst"),
     ]
+
+def test_filesystem_builder():
+    fsb = FilesystemBuilder()
+    fsb.apply(read_line("$ cd /"))
+    assert fsb.current_dir == Dir('/')
+    fsb.apply(read_line("$ cd a"))
+    assert fsb.current_dir == Dir('a')
+    fsb.apply(read_line("$ cd b"))
+    fsb.apply(read_line("$ cd .."))
+    assert fsb.current_dir == Dir('a')
+
+def xtest_make_filesystem():
+    dir_e = Dir(
+        "e",
+        File.from_spec("584 i")
+    )
+    dir_a = Dir(
+        "a",
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+        File.from_spec("62596 h.lst"),
+        dir_e,
+    )
+
+    lns = read_test_input("""
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+""")
+    assert filesystem(lns) == dir_a
