@@ -59,3 +59,8 @@ def test_input_strip():
 def test_input_day_07():
     lines = read_input(7)
     assert len(lines) == 988
+
+def test_input_day_08():
+    lines = read_input(8)
+    assert len(lines) == 99
+    assert len(list(lines)[0]) == 99
