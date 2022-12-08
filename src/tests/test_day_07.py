@@ -82,9 +82,21 @@ def test_files_are_plain_data():
     assert File.from_spec(Output("14848514 b.txt").raw) == File(name="b.txt", size=14848514)
     assert File.from_spec(Output("14848514 b.txt").raw) != File.from_spec(Output("8504156 c.dat").raw)
 
-def test_dir_is_equal_by_name():
+def test_dir_is_equal_by_name_and_contents():
     assert Dir('a') == Dir('a')
     assert not Dir('a') == Dir('b')
+
+    dir_a1 = Dir(
+        "a",
+        File.from_spec("129116 f"),
+    )
+    dir_a2 = Dir(
+        "a",
+        File.from_spec("129116 f"),
+        File.from_spec("2557 g"),
+    )
+    assert not dir_a1 == dir_a2
+
 
 def test_dir_is_a_tree_of_files():
     dir_a = Dir(
@@ -142,24 +154,44 @@ def test_find_dir():
         File.from_spec("62596 h.lst"),
     ]
 
-def test_filesystem_builder():
+
+def test_filesystem_build_directories():
     fsb = FilesystemBuilder()
     assert not fsb.building
     fsb.apply(read_line("$ cd /"))
     assert fsb.current_dir == Dir('/')
+    with pytest.raises(Exception):
+        fsb.apply(read_line("$ cd a"))
+    fsb.apply(read_line("$ ls"))
+    assert fsb.building
+    fsb.apply(read_line("dir a"))
     fsb.apply(read_line("$ cd a"))
     assert fsb.current_dir == Dir('a')
+    with pytest.raises(Exception):
+        fsb.apply(read_line("$ cd b"))
+    fsb.apply(read_line("$ ls"))
+    fsb.apply(read_line("dir b"))
     fsb.apply(read_line("$ cd b"))
     fsb.apply(read_line("$ cd .."))
-    assert fsb.current_dir == Dir('a')
+    assert fsb.current_dir.name == Dir('a').name
 
-def xtest_make_filesystem():
+def test_filesystem_build_files():
+    fs = FilesystemBuilder()
+    fs.apply(read_line("$ cd /"))
+    assert fs.current_dir == Dir('/')
+    with pytest.raises(Exception):
+        fs.current_dir['b.txt']
+    fs.apply(read_line("$ ls"))
+    fs.apply(read_line("14848514 b.txt"))
+    assert fs.current_dir['b.txt'] == File.from_spec("14848514 b.txt")
+
+def test_make_filesystem():
     dir_e = Dir(
         "e",
         File.from_spec("584 i")
     )
     dir_a = Dir(
-        "a",
+        "/",
         File.from_spec("129116 f"),
         File.from_spec("2557 g"),
         File.from_spec("62596 h.lst"),
@@ -167,7 +199,7 @@ def xtest_make_filesystem():
     )
 
     lns = read_test_input("""
-$ cd a
+$ cd /
 $ ls
 dir e
 29116 f
@@ -177,4 +209,4 @@ $ cd e
 $ ls
 584 i
 """)
-    assert filesystem(lns) == dir_a
+    assert filesystem(lns).name == dir_a.name

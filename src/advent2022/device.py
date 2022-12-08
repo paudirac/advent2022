@@ -48,7 +48,8 @@ class Dir(dict):
     def __eq__(self, other):
         if not isinstance(other, Dir):
             return False
-        return self.name == other.name
+        return self.name == other.name and \
+            self.items() == other.items()
 
 
 def walk(root, condition, found=None):
@@ -71,8 +72,29 @@ class FilesystemBuilder:
         match command:
             case Command("cd", [dir_name, *rest]):
                 self._change_dir(dir_name)
+            case Command("ls", [*rest]):
+                self.building = True
+            case Output(raw=raw):
+                self._build(raw)
             case _:
-                log.debug(f'Unable to apply {command=}')
+                log.warning(f'Unable to apply {command=}')
+
+    def _build(self, raw):
+        log.debug(f'building {raw=}')
+        match raw.split():
+            case ["dir", dir_name]:
+                self._build_dir(dir_name)
+            case [size, name]:
+                self._build_file(name, size)
+            case _:
+                log.warning(f'Unable to build {raw=}')
+
+    def _build_dir(self, dir_name):
+        new_dir = Dir(dir_name)
+        self.current_dir[dir_name] = new_dir
+
+    def _build_file(self, name, size):
+        self.current_dir[name] = File(name, int(size))
 
     def _change_dir(self, dir_name):
         if dir_name == '..':
@@ -85,14 +107,20 @@ class FilesystemBuilder:
             dest = self.current_dir.get(dir_name)
             assert dest is not None, f"Can't change to {dir_name}, not in current: {self.current_dir.name}"
             self._visited_dirs.append(dest)
+        log.debug(f"cd'd to {dir_name}")
 
     @property
     def current_dir(self):
         return self._visited_dirs[-1] if len(self._visited_dirs) > 0 else None
 
+    @property
+    def root(self):
+        return self._visited_dirs[0]
+
 def filesystem(lines):
     commands = read_terminal(lines)
+    log.debug(f'{commands=}')
+    fsb = FilesystemBuilder()
     for command in commands:
-        pass
-
-    return None
+        fsb.apply(command)
+    return fsb.root
