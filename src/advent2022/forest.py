@@ -14,13 +14,13 @@ class Tree(namedtuple('Tree', 'index height')):
                 hm.visible_from_bottom(self))
 
     def left(self, hm: 'HeigtMap'):
-        return [hm[(i, self.index.j)] for i in range(0, self.index.i)]
+        return [hm[(i, self.index.j)] for i in reversed(range(0, self.index.i))]
 
     def right(self, hm: 'HeigtMap'):
         return [hm[(i, self.index.j)] for i in range(self.index.i + 1, hm.size[0])]
 
     def top(self, hm: 'HeigtMap'):
-        return [hm[(self.index.i, j)] for j in range(0, self.index.j)]
+        return [hm[(self.index.i, j)] for j in reversed(range(0, self.index.j))]
 
     def bottom(self, hm: 'HeigtMap'):
         return [hm[(self.index.i, j)] for j in range(self.index.j + 1, hm.size[1])]
@@ -33,6 +33,9 @@ class Tree(namedtuple('Tree', 'index height')):
             raise TypeError(f'Invalid type for {other}: {type(other)}, expecting Tree')
         return self.height < other.height
 
+    def scenic_score(self, hm: 'HeightMap'):
+        pass
+        #left = [l for ]
 
 class HeightMap(dict):
 
