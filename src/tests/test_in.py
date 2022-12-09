@@ -64,3 +64,7 @@ def test_input_day_08():
     lines = read_input(8)
     assert len(lines) == 99
     assert len(list(lines)[0]) == 99
+
+def test_input_day_09():
+    lines = read_input(9)
+    assert len(lines) == 2000
