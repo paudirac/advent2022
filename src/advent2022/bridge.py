@@ -29,6 +29,7 @@ class R(Motion):
 class U(Motion): pass
 class L(Motion): pass
 class D(Motion): pass
+Z = Motion(0)
 
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
@@ -53,6 +54,7 @@ class Point(namedtuple('Point', ['x', 'y'])):
             case U(steps): return Point(self.x, self.y + steps)
             case L(steps): return Point(self.x - steps, self.y)
             case D(steps): return Point(self.x, self.y - steps)
+            case Motion(0): return Point(self.x, self.y)
             case _:
                 raise TypeError(f'Invalid motion: {motion}')
 

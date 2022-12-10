@@ -4,7 +4,7 @@ log = get_logger(__name__)
 
 from advent2022.bridge import (
     Motion,
-    R, U, L, D,
+    R, U, L, D, Z,
     read_motions,
     Point,
     unpack,
@@ -107,6 +107,8 @@ def test_Motion_add():
     assert p.move(U(1)) == Point(0, 1)
     assert p.move(D(1)) == Point(0, -1)
 
+    assert p.move(Z) == p
+
 def test_Rope():
     rope = Rope(Point(0, 0), Point(0, 0))
     assert rope.head == Point(0, 0)
@@ -118,3 +120,9 @@ def test_Rope_move_head():
     for motion in motions:
         rope.move_head(motion)
     assert rope.head == Point(2, 2)
+
+    rope.move_head(Z)
+    assert rope.head == Point(2, 2)
+
+def test_Z():
+    assert Z.steps == 0
