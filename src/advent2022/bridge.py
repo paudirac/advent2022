@@ -58,3 +58,8 @@ class Point(namedtuple('Point', ['x', 'y'])):
 
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
+
+@dataclass
+class Rope:
+    head: Point
+    tail: Point

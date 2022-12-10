@@ -8,6 +8,7 @@ from advent2022.bridge import (
     read_motions,
     Point,
     unpack,
+    Rope,
 )
 
 example = """
@@ -105,3 +106,8 @@ def test_Motion_add():
     assert p.move(L(1)) == Point(-1, 0)
     assert p.move(U(1)) == Point(0, 1)
     assert p.move(D(1)) == Point(0, -1)
+
+def test_Rope():
+    rope = Rope(Point(0, 0), Point(0, 0))
+    assert rope.head == Point(0, 0)
+    assert rope.tail == Point(0, 0)
