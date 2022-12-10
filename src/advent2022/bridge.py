@@ -45,5 +45,16 @@ class Point(namedtuple('Point', ['x', 'y'])):
         dy = abs(y0 - y1)
         return max(dx, dy) <= 1
 
+    def move(self, motion: Motion):
+        if not isinstance(motion, Motion):
+            raise TypeError(f'Expected Motion got {type(motion)}')
+        match motion:
+            case R(steps): return Point(self.x + steps, self.y)
+            case U(steps): return Point(self.x, self.y + steps)
+            case L(steps): return Point(self.x - steps, self.y)
+            case D(steps): return Point(self.x, self.y - steps)
+            case _:
+                raise TypeError(f'Invalid motion: {motion}')
+
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])

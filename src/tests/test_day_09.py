@@ -94,3 +94,14 @@ def test_unpack_motions():
     motions = read_motions(lines)
     assert len(motions) == 8
     assert len(unpack(motions)) == sum([4, 4, 3, 1, 4, 1, 5, 2])
+
+def test_Motion_add():
+    p = Point(0, 0)
+    assert p.move(R(1)) == Point(1, 0)
+    assert p.move(R(4)) == Point(4, 0)
+    assert p.move(L(2)) == Point(-2, 0)
+
+    assert p.move(R(1)) == Point(1, 0)
+    assert p.move(L(1)) == Point(-1, 0)
+    assert p.move(U(1)) == Point(0, 1)
+    assert p.move(D(1)) == Point(0, -1)
