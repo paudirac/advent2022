@@ -63,3 +63,6 @@ def unpack(motions):
 class Rope:
     head: Point
     tail: Point
+
+    def move_head(self, motion: Motion):
+        self.head = self.head.move(motion)

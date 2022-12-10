@@ -111,3 +111,10 @@ def test_Rope():
     rope = Rope(Point(0, 0), Point(0, 0))
     assert rope.head == Point(0, 0)
     assert rope.tail == Point(0, 0)
+
+def test_Rope_move_head():
+    rope = Rope(Point(0, 0), Point(0, 0))
+    motions = read_motions(lines)
+    for motion in motions:
+        rope.move_head(motion)
+    assert rope.head == Point(2, 2)
