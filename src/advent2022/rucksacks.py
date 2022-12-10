@@ -1,7 +1,7 @@
 from collections import namedtuple
 import string
 
-from utils import get_logger
+from utils import get_logger, flatten
 log = get_logger(__name__)
 
 PRIORITIES = {
@@ -48,13 +48,10 @@ def halves(string):
     midpoint = int(lenght / 2)
     return string[:midpoint], string[midpoint:]
 
-def _flatten(list_of_lists):
-    return [item for inner_list in list_of_lists
-                     for item in inner_list]
 
 def sum_priorities_of_common_items(lines):
     rucksacks = [Rucksack.from_line(line) for line in lines]
-    common_items = _flatten(rucksak.common_items() for rucksak in rucksacks)
+    common_items = flatten(rucksak.common_items() for rucksak in rucksacks)
     return sum(item.priority for item in common_items)
 
 class Badge(Item):

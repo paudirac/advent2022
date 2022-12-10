@@ -50,3 +50,7 @@ def read_test_input(example):
     """Reads test input, expecting a format that starts and ends with
     an empty line, so that the triple quote syntax can be used for examples."""
     return TestInput(example)
+
+def flatten(list_of_lists):
+    return [item for inner_list in list_of_lists
+                     for item in inner_list]

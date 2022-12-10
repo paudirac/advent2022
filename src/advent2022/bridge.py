@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from collections import namedtuple
-from utils import get_logger
+
+from utils import get_logger, flatten
 log = get_logger(__name__)
 
 
@@ -19,6 +20,8 @@ class Motion:
             case _:
                 raise TypeError(f"{line} doesn't seem a valid motion")
 
+    def unpack(self):
+        return [self.__class__(1) for _ in range(self.steps)]
 
 class R(Motion):
     pass
@@ -31,4 +34,16 @@ def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
 
 
-Point = namedtuple('Point', ['x', 'y'])
+class Point(namedtuple('Point', ['x', 'y'])):
+
+    def touches(self, other):
+        if not isinstance(other, Point):
+            raise TypeError(f'Invalid operation for Point and {type(other)}')
+        x0, y0 = self
+        x1, y1 = other
+        dx = abs(x0 - x1)
+        dy = abs(y0 - y1)
+        return max(dx, dy) <= 1
+
+def unpack(motions):
+    return flatten([motion.unpack() for motion in motions])
