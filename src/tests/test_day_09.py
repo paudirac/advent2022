@@ -6,6 +6,7 @@ from advent2022.bridge import (
     Motion,
     R, U, L, D,
     read_motions,
+    Point,
 )
 
 example = """
@@ -51,3 +52,8 @@ def test_motions():
         L(5),
         R(2),
     ]
+
+def test_Point():
+    assert Point(0, 0) == (0, 0)
+    assert Point(2, 3) == (2, 3)
+    assert not Point(0, 0) == Point(2, 3)

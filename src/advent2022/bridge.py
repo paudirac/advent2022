@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections import namedtuple
 from utils import get_logger
 log = get_logger(__name__)
 
@@ -28,3 +29,6 @@ class D(Motion): pass
 
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
+
+
+Point = namedtuple('Point', ['x', 'y'])
