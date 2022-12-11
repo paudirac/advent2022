@@ -88,8 +88,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
             case _:
                 raise TypeError(f'Invalid motion: {motion}')
 
-    def close_movement_to(self, dest: 'Point') -> Motion:
-        return (dest - self).as_motion
 
 
 def unpack(motions):
