@@ -57,20 +57,27 @@ def vector_to_motion(vector: Vector):
         case _:
             raise NotImplementedError('Cannot convert {self} to simple motion')
 
+
 def motion_to_vector(motion: Motion):
     if not isinstance(motion, Motion):
         raise TypeError(f'Expected Motion, got {type(motion)}')
     match motion:
-        case R(steps): return Point(steps, 0)
-        case U(steps): return Point(0, steps)
-        case L(steps): return Point(-steps, 0)
-        case D(steps): return Point(0, -steps)
-        case Motion(0): return Point(0, 0)
+        case R(steps): return Vector(steps, 0)
+        case U(steps): return Vector(0, steps)
+        case L(steps): return Vector(-steps, 0)
+        case D(steps): return Vector(0, -steps)
+        case Motion(0): return Vector(0, 0)
         case _:
             raise TypeError(f'Invalid motion: {motion}')
 
 
 class Point(namedtuple('Point', ['x', 'y'])):
+
+    def __add__(self, displacement: Vector) -> 'Point':
+        if not isinstance(displacement, Vector):
+            raise TypeError(f'Expected Vector, got {type(displacement)}')
+
+        return Point(self.x + displacement.dx, self.y + displacement.dy)
 
     def __sub__(self, other: 'Point') -> Vector:
         if not isinstance(other, Point):
@@ -81,23 +88,12 @@ class Point(namedtuple('Point', ['x', 'y'])):
         dy = y0 - y1
         return Vector(dx, dy)
 
-    def move(self, motion: Motion):
-        if not isinstance(motion, Motion):
-            raise TypeError(f'Expected Motion, got {type(motion)}')
-        match motion:
-            case R(steps): return Point(self.x + steps, self.y)
-            case U(steps): return Point(self.x, self.y + steps)
-            case L(steps): return Point(self.x - steps, self.y)
-            case D(steps): return Point(self.x, self.y - steps)
-            case Motion(0): return Point(self.x, self.y)
-            case _:
-                raise TypeError(f'Invalid motion: {motion}')
-
     def to(self, other):
         if not isinstance(other, Point):
             raise TypeError(f'Invalid operation for Point and {type(other)}')
 
         return other - self
+
 
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
@@ -109,7 +105,8 @@ class Rope:
     tail: Point
 
     def move_head(self, motion: Motion):
-        self.head = self.head.move(motion)
+        displacement = motion_to_vector(motion)
+        self.head = self.head + displacement
         self._move_tail(motion)
 
     def _move_tail(self, motion):

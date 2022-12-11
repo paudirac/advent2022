@@ -100,17 +100,32 @@ def test_unpack_motions():
     assert len(unpack(motions)) == sum([4, 4, 3, 1, 4, 1, 5, 2])
 
 def test_Motion_add():
-    p = Point(0, 0)
-    assert p.move(R(1)) == Point(1, 0)
-    assert p.move(R(4)) == Point(4, 0)
-    assert p.move(L(2)) == Point(-2, 0)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(R(1))
+    assert rope.head == Point(1, 0)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(R(4))
+    assert rope.head == Point(4, 0)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(L(2))
+    assert rope.head == Point(-2, 0)
 
-    assert p.move(R(1)) == Point(1, 0)
-    assert p.move(L(1)) == Point(-1, 0)
-    assert p.move(U(1)) == Point(0, 1)
-    assert p.move(D(1)) == Point(0, -1)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(R(1))
+    assert rope.head == Point(1, 0)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(L(1))
+    assert rope.head == Point(-1, 0)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(U(1))
+    assert rope.head == Point(0, 1)
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(D(1))
+    assert rope.head == Point(0, -1)
 
-    assert p.move(Z) == p
+    rope = Rope(Point(0, 0), Point(0, 0))
+    rope.move_head(Z)
+    assert rope.head == Point(0, 0)
 
 def test_Rope():
     rope = Rope(Point(0, 0), Point(0, 0))
@@ -205,3 +220,8 @@ def test_rope_stretching():
     # ....
     assert Rope(head=Point(1, 1), tail=Point(1, 3)).stretched == True
     assert Point(1, 3).to(Point(1, 1)) == Vector(0, -2)
+
+def test_add_displacement():
+    p = Point(0, 0)
+    displacement = Vector(3, -2)
+    assert p + displacement == Point(3, -2)
