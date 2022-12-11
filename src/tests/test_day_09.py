@@ -9,6 +9,7 @@ from advent2022.bridge import (
     Point,
     unpack,
     Rope,
+    Vector,
 )
 
 example = """
@@ -130,9 +131,23 @@ def test_Z():
 def test_Point_tail_movement():
     head = Point(0, 0)
     tail = Point(0, 0)
-    assert tail.close_movement_to(Point(0, 0)) == Z
+    assert tail.close_movement_to(Point(0, 0)) == Z.as_vector
 
-    assert tail.close_movement_to(Point(0, 1)) == U(1)
-    assert tail.close_movement_to(Point(0, -1)) == D(1)
-    assert tail.close_movement_to(Point(1, 0)) == R(1)
-    assert tail.close_movement_to(Point(-1, 0)) == L(1)
+    assert tail.close_movement_to(Point(0, 1)) == U(1).as_vector
+    assert tail.close_movement_to(Point(0, -1)) == D(1).as_vector
+    assert tail.close_movement_to(Point(1, 0)) == R(1).as_vector
+    assert tail.close_movement_to(Point(-1, 0)) == L(1).as_vector
+
+    assert tail.close_movement_to(Point(1, 1)) == Vector(1, 1)
+
+def test_vector():
+    o = Point(0, 0)
+    assert Point(0, 0) - o  == Vector(0, 0)
+    assert Point(1, 0) - o  == Vector(1, 0)
+    assert Point(-1, 0) - o == Vector(-1, 0)
+    assert Point(0, 1) - o  == Vector(0, 1)
+    assert Point(0, -1) - o == Vector(0, -1)
+    assert Point(1, 1) - o == Vector(1, 1)
+    assert Point(2, -3) - o == Vector(2, -3)
+
+    assert Point(3, 2) - Point(1, 1) == Vector(2, 1)

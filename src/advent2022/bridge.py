@@ -4,6 +4,7 @@ from collections import namedtuple
 from utils import get_logger, flatten
 log = get_logger(__name__)
 
+Vector = namedtuple('Vector', ['dx', 'dy'])
 
 @dataclass
 class Motion:
@@ -12,16 +13,36 @@ class Motion:
     @classmethod
     def from_line(cls, line):
         direction, steps = line.split()
-        match direction:
-            case "R": return R(int(steps))
-            case "U": return U(int(steps))
-            case "L": return L(int(steps))
-            case "D": return D(int(steps))
+        match line.split():
+            case ["R", steps]: return R(int(steps))
+            case ["U", steps]: return U(int(steps))
+            case ["L", steps]: return L(int(steps))
+            case ["D", steps]: return D(int(steps))
             case _:
                 raise TypeError(f"{line} doesn't seem a valid motion")
 
     def unpack(self):
         return [self.__class__(1) for _ in range(self.steps)]
+
+    @property
+    def as_vector(self):
+        match self:
+            case R(steps): return Vector(steps, 0)
+            case U(steps): return Vector(0, steps)
+            case L(steps): return Vector(-steps, 0)
+            case D(steps): return Vector(0, -steps)
+            case z if z == Z: return Vector(0, 0)
+            case _:
+                raise NotImplementedError('Wrong path of execution')
+
+    @property
+    def from_vector(cls, vector: Vector):
+        match vector:
+            case Vector(0, 0): return Z
+            case Vector(dx, 0) if dx >= 0: return R(dx)
+            case Vector(dx, 0) if dx < 0: return L(dx)
+            case Vector(0, dy) if dy >= 0: return U(dy)
+            case Vector(0, dy) if dy < 0: return D(dy)
 
 class R(Motion):
     pass
@@ -34,7 +55,6 @@ Z = Motion(0)
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
 
-Vector = namedtuple('Vector', ['o', 'p'])
 
 class Point(namedtuple('Point', ['x', 'y'])):
 
@@ -69,18 +89,20 @@ class Point(namedtuple('Point', ['x', 'y'])):
         x1, y1 = other
         dx = x0 - x1
         dy = y0 - y1
-        match [dx, dy]:
-            case [0, 0]: return Z
-            case [dx, 0] if dx >= 0: return R(dx)
-            case [dx, 0] if dx < 0: return L(abs(dx))
-            case [0, dy] if dy >= 0: return U(dy)
-            case [0, dy] if dy < 0: return D(abs(dy))
-            case _:
-                raise NotImplementedError("Here the abstraction fails")
+        return Vector(dx, dy)
+        # match [dx, dy]:
+        #     case [0, 0]: return Z
+        #     case [dx, 0] if dx >= 0: return R(dx)
+        #     case [dx, 0] if dx < 0: return L(abs(dx))
+        #     case [0, dy] if dy >= 0: return U(dy)
+        #     case [0, dy] if dy < 0: return D(abs(dy))
+        #     case _:
+        #         raise NotImplementedError("Here the abstraction fails")
 
 
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
+
 
 @dataclass
 class Rope:
