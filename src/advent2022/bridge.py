@@ -34,6 +34,7 @@ Z = Motion(0)
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
 
+Vector = namedtuple('Vector', ['o', 'p'])
 
 class Point(namedtuple('Point', ['x', 'y'])):
 
@@ -48,7 +49,7 @@ class Point(namedtuple('Point', ['x', 'y'])):
 
     def move(self, motion: Motion):
         if not isinstance(motion, Motion):
-            raise TypeError(f'Expected Motion got {type(motion)}')
+            raise TypeError(f'Expected Motion, got {type(motion)}')
         match motion:
             case R(steps): return Point(self.x + steps, self.y)
             case U(steps): return Point(self.x, self.y + steps)
@@ -57,6 +58,26 @@ class Point(namedtuple('Point', ['x', 'y'])):
             case Motion(0): return Point(self.x, self.y)
             case _:
                 raise TypeError(f'Invalid motion: {motion}')
+
+    def close_movement_to(self, dest: 'Point'):
+        return dest - self
+
+    def __sub__(self, other):
+        if not isinstance(other, Point):
+            raise TypeError(f'Expected Point, got {type(other)}')
+        x0, y0 = self
+        x1, y1 = other
+        dx = x0 - x1
+        dy = y0 - y1
+        match [dx, dy]:
+            case [0, 0]: return Z
+            case [dx, 0] if dx >= 0: return R(dx)
+            case [dx, 0] if dx < 0: return L(abs(dx))
+            case [0, dy] if dy >= 0: return U(dy)
+            case [0, dy] if dy < 0: return D(abs(dy))
+            case _:
+                raise NotImplementedError("Here the abstraction fails")
+
 
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
@@ -68,3 +89,7 @@ class Rope:
 
     def move_head(self, motion: Motion):
         self.head = self.head.move(motion)
+        self._move_tail(motion)
+
+    def _move_tail(self, motion):
+        pass

@@ -126,3 +126,13 @@ def test_Rope_move_head():
 
 def test_Z():
     assert Z.steps == 0
+
+def test_Point_tail_movement():
+    head = Point(0, 0)
+    tail = Point(0, 0)
+    assert tail.close_movement_to(Point(0, 0)) == Z
+
+    assert tail.close_movement_to(Point(0, 1)) == U(1)
+    assert tail.close_movement_to(Point(0, -1)) == D(1)
+    assert tail.close_movement_to(Point(1, 0)) == R(1)
+    assert tail.close_movement_to(Point(-1, 0)) == L(1)
