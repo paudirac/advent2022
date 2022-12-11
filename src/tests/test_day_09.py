@@ -12,6 +12,7 @@ from advent2022.bridge import (
     Rope,
     Vector,
     vector_to_motion,
+    positions_tail_visited_at_least_once,
 )
 
 example = """
@@ -225,3 +226,55 @@ def test_add_displacement():
     p = Point(0, 0)
     displacement = Vector(3, -2)
     assert p + displacement == Point(3, -2)
+
+def test_tail_follows_head():
+    # .....    .....    .....
+    # .TH.. -> .T.H. -> ..TH.
+    # .....    .....    .....
+    rope = Rope(Point(2, 1), Point(1, 1))
+    rope.move_head(R(1))
+    assert rope.head == Point(3, 1)
+    assert rope.tail == Point(2, 1)
+
+    # ...    ...    ...
+    # .T.    .T.    ...
+    # .H. -> ... -> .T.
+    # ...    .H.    .H.
+    # ...    ...    ...
+    rope = Rope(Point(1, 2), Point(1, 3))
+    rope.move_head(D(1))
+    assert rope.head == Point(1, 1)
+    assert rope.tail == Point(1, 2)
+
+    # .....    .....    .....
+    # .....    ..H..    ..H..
+    # ..H.. -> ..... -> ..T..
+    # .T...    .T...    .....
+    # .....    .....    .....
+    rope = Rope(Point(2, 2), Point(1, 1))
+    assert not rope.stretched
+    rope.move_head(U(1))
+    assert rope.head == Point(2, 3)
+    assert rope.tail == Point(2, 2)
+
+    # .....    .....    .....
+    # .....    .....    .....
+    # ..H.. -> ...H. -> ..TH.
+    # .T...    .T...    .....
+    # .....    .....    .....
+    rope = Rope(Point(2, 2), Point(1, 1))
+    rope.move_head(R(1))
+    assert rope.head == Point(3, 2)
+    assert rope.tail == Point(2, 2)
+
+def test_run():
+    rope = Rope(Point(0, 0), Point(0, 0))
+    motions = read_motions(lines)
+    for motion in unpack(motions):
+        rope.move_head(motion)
+    assert rope.head == Point(2, 2)
+    assert rope.tail == Point(1, 2)
+    assert len(rope.tail_visits) == 13
+
+def test_positions_tail_visited_at_least_once():
+    assert positions_tail_visited_at_least_once(lines) == 13

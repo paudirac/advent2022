@@ -12,6 +12,7 @@ from advent2022 import (
     tuning,
     device,
     forest,
+    bridge,
 )
 
 SOLVERS = {
@@ -31,6 +32,7 @@ SOLVERS = {
     '7_2': device.smallest_dir_to_delte_size,
     '8_1': forest.count_visible_trees,
     '8_2': forest.max_scenic_score,
+    '9_1': bridge.positions_tail_visited_at_least_once,
 }
 
 
