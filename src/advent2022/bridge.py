@@ -60,6 +60,15 @@ def read_motions(lines):
 
 class Point(namedtuple('Point', ['x', 'y'])):
 
+    def __sub__(self, other: 'Point') -> Vector:
+        if not isinstance(other, Point):
+            raise TypeError(f'Expected Point, got {type(other)}')
+        x0, y0 = self
+        x1, y1 = other
+        dx = x0 - x1
+        dy = y0 - y1
+        return Vector(dx, dy)
+
     def touches(self, other):
         if not isinstance(other, Point):
             raise TypeError(f'Invalid operation for Point and {type(other)}')
@@ -81,15 +90,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
 
     def close_movement_to(self, dest: 'Point') -> Motion:
         return (dest - self).as_motion
-
-    def __sub__(self, other):
-        if not isinstance(other, Point):
-            raise TypeError(f'Expected Point, got {type(other)}')
-        x0, y0 = self
-        x1, y1 = other
-        dx = x0 - x1
-        dy = y0 - y1
-        return Vector(dx, dy)
 
 
 def unpack(motions):
