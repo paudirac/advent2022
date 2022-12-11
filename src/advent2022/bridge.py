@@ -83,14 +83,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
         dx = x0 - x1
         dy = y0 - y1
         return Vector(dx, dy)
-        # match [dx, dy]:
-        #     case [0, 0]: return Z
-        #     case [dx, 0] if dx >= 0: return R(dx)
-        #     case [dx, 0] if dx < 0: return L(abs(dx))
-        #     case [0, dy] if dy >= 0: return U(dy)
-        #     case [0, dy] if dy < 0: return D(abs(dy))
-        #     case _:
-        #         raise NotImplementedError("Here the abstraction fails")
 
 
 def unpack(motions):
