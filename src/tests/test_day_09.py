@@ -1,4 +1,5 @@
 import pytest
+import math
 from utils import get_logger, read_test_input
 log = get_logger(__name__)
 
@@ -149,6 +150,24 @@ def test_vector():
     assert Point(2, -3) - o == Vector(2, -3)
 
     assert Point(3, 2) - Point(1, 1) == Vector(2, 1)
+
+def test_vector_length():
+    o = Point(0, 0)
+    assert Vector(0, 0).length == 0
+    assert Vector(1, 0).length == 1
+    assert Vector(-1, 0).length == 1
+    assert Vector(0, 1).length == 1
+    assert Vector(0, -1).length == 1
+    assert Vector(1, 1).length == pytest.approx(math.sqrt(2))
+    assert Vector(2, -3).length == pytest.approx(math.sqrt(2*2 + 3*3))
+
+    assert Vector(0, 0).length2 == 0
+    assert Vector(1, 0).length2 == 1
+    assert Vector(-1, 0).length2 == 1
+    assert Vector(0, 1).length2 == 1
+    assert Vector(0, -1).length2 == 1
+    assert Vector(1, 1).length2 == 2
+    assert Vector(2, -3).length2 == 2*2 + 3*3
 
 def test_vector_to_motion():
     assert Vector(0, 0).as_motion == Z

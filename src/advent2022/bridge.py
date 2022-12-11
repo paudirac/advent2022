@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from collections import namedtuple
+import math
 
 from utils import get_logger, flatten
 log = get_logger(__name__)
@@ -43,6 +44,14 @@ class Vector(namedtuple('Vector', ['dx', 'dy'])):
             case Vector(0, dy) if dy < 0: return D(-dy)
             case _:
                 raise NotImplementedError('Cannot convert {self} to simple motion')
+
+    @property
+    def length(self):
+        return math.sqrt(self.dx * self.dx + self.dy * self.dy)
+
+    @property
+    def length2(self):
+        return self.dx * self.dx + self.dy * self.dy
 
 
 def read_motions(lines):
