@@ -63,7 +63,7 @@ def test_Point():
     assert Point(2, 3) == (2, 3)
     assert not Point(0, 0) == Point(2, 3)
 
-def test_Point_touches():
+def test_rope_endpoints_touching():
     # . . . .
     # x u y .
     # l p r .
@@ -79,18 +79,18 @@ def test_Point_touches():
     w = Point(2, 0)
     poverlap = Point(1, 1)
 
-    assert u.touches(p)
-    assert l.touches(p)
-    assert r.touches(p)
-    assert d.touches(p)
-    assert poverlap.touches(p)
-    assert x.touches(p)
-    assert y.touches(p)
-    assert z.touches(p)
-    assert w.touches(p)
+    assert Rope(u, p).touching
+    assert Rope(l, p).touching
+    assert Rope(r, p).touching
+    assert Rope(d, p).touching
+    assert Rope(p, poverlap).touching
+    assert Rope(x, p).touching
+    assert Rope(y, p).touching
+    assert Rope(z, p).touching
+    assert Rope(w, p).touching
 
     # is symetric
-    assert p.touches(u)
+    assert Rope(p, u).touching
 
 def test_unpack_motions():
     assert unpack([R(4)]) == [R(1), R(1), R(1), R(1)]

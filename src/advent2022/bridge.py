@@ -47,7 +47,7 @@ def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
 
 
-def vector_to_motion(vector):
+def vector_to_motion(vector: Vector):
     match vector:
         case Vector(0, 0): return Z
         case Vector(dx, 0) if dx >= 0: return R(dx)
@@ -56,6 +56,18 @@ def vector_to_motion(vector):
         case Vector(0, dy) if dy < 0: return D(-dy)
         case _:
             raise NotImplementedError('Cannot convert {self} to simple motion')
+
+def motion_to_vector(motion: Motion):
+    if not isinstance(motion, Motion):
+        raise TypeError(f'Expected Motion, got {type(motion)}')
+    match motion:
+        case R(steps): return Point(steps, 0)
+        case U(steps): return Point(0, steps)
+        case L(steps): return Point(-steps, 0)
+        case D(steps): return Point(0, -steps)
+        case Motion(0): return Point(0, 0)
+        case _:
+            raise TypeError(f'Invalid motion: {motion}')
 
 
 class Point(namedtuple('Point', ['x', 'y'])):
@@ -68,13 +80,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
         dx = x0 - x1
         dy = y0 - y1
         return Vector(dx, dy)
-
-    def touches(self, other):
-        if not isinstance(other, Point):
-            raise TypeError(f'Invalid operation for Point and {type(other)}')
-
-        motion_to_other = other - self
-        return motion_to_other.length2 <= 2
 
     def move(self, motion: Motion):
         if not isinstance(motion, Motion):
@@ -112,4 +117,9 @@ class Rope:
 
     @property
     def stretched(self):
-        return not self.head.touches(self.tail)
+        return not self.touching
+
+    @property
+    def touching(self):
+        v = self.head - self.tail
+        return v.length2 <= 2
