@@ -11,6 +11,7 @@ from advent2022.bridge import (
     unpack,
     Rope,
     Vector,
+    vector_to_motion,
 )
 
 example = """
@@ -161,11 +162,46 @@ def test_vector_length():
     assert Vector(2, -3).length2 == 2*2 + 3*3
 
 def test_vector_to_motion():
-    assert Vector(0, 0).as_motion == Z
-    assert Vector(1, 0).as_motion == R(1)
-    assert Vector(-1, 0).as_motion == L(1)
-    assert Vector(0, 1).as_motion == U(1)
-    assert Vector(0, -1).as_motion == D(1)
+    assert vector_to_motion(Vector(0, 0)) == Z
+    assert vector_to_motion(Vector(1, 0)) == R(1)
+    assert vector_to_motion(Vector(-1, 0)) == L(1)
+    assert vector_to_motion(Vector(0, 1)) == U(1)
+    assert vector_to_motion(Vector(0, -1)) == D(1)
 
-    assert Vector(4, 0).as_motion == R(4)
-    assert Vector(0, -3).as_motion == D(3)
+    assert vector_to_motion(Vector(4, 0)) == R(4)
+    assert vector_to_motion(Vector(0, -3)) == D(3)
+
+
+def test_rope_stretching():
+    # ....
+    # .TH.
+    # ....
+    assert Rope(head=Point(2, 1), tail=Point(1, 1)).stretched == False
+    assert Point(1, 1).to(Point(2, 1)) == Vector(1, 0)
+
+    # ....
+    # .H..
+    # ..T.
+    # ....
+    assert Rope(head=Point(1, 2), tail=Point(2, 1)).stretched == False
+    assert Point(2, 1).to(Point(1, 2)) == Vector(-1, 1)
+
+    # ...
+    # .H. (H covers T)
+    # ...
+    assert Rope(head=Point(1, 1), tail=Point(1, 1)).stretched == False
+    assert Point(1, 1).to(Point(1, 1)) == Vector(0, 0)
+
+    # .....
+    # .T.H.
+    # .....
+    assert Rope(head=Point(3, 1), tail=Point(1, 1)).stretched == True
+    assert Point(1, 1).to(Point(3, 1)) == Vector(2, 0)
+
+    # ...
+    # .T.
+    # ...
+    # .H.
+    # ....
+    assert Rope(head=Point(1, 1), tail=Point(1, 3)).stretched == True
+    assert Point(1, 3).to(Point(1, 1)) == Vector(0, -2)

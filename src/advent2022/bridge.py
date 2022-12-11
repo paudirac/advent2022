@@ -35,17 +35,6 @@ Z = Motion(0)
 class Vector(namedtuple('Vector', ['dx', 'dy'])):
 
     @property
-    def as_motion(self):
-        match self:
-            case Vector(0, 0): return Z
-            case Vector(dx, 0) if dx >= 0: return R(dx)
-            case Vector(dx, 0) if dx < 0: return L(-dx)
-            case Vector(0, dy) if dy >= 0: return U(dy)
-            case Vector(0, dy) if dy < 0: return D(-dy)
-            case _:
-                raise NotImplementedError('Cannot convert {self} to simple motion')
-
-    @property
     def length(self):
         return math.sqrt(self.dx * self.dx + self.dy * self.dy)
 
@@ -56,6 +45,17 @@ class Vector(namedtuple('Vector', ['dx', 'dy'])):
 
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
+
+
+def vector_to_motion(vector):
+    match vector:
+        case Vector(0, 0): return Z
+        case Vector(dx, 0) if dx >= 0: return R(dx)
+        case Vector(dx, 0) if dx < 0: return L(-dx)
+        case Vector(0, dy) if dy >= 0: return U(dy)
+        case Vector(0, dy) if dy < 0: return D(-dy)
+        case _:
+            raise NotImplementedError('Cannot convert {self} to simple motion')
 
 
 class Point(namedtuple('Point', ['x', 'y'])):
@@ -88,7 +88,11 @@ class Point(namedtuple('Point', ['x', 'y'])):
             case _:
                 raise TypeError(f'Invalid motion: {motion}')
 
+    def to(self, other):
+        if not isinstance(other, Point):
+            raise TypeError(f'Invalid operation for Point and {type(other)}')
 
+        return other - self
 
 def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
@@ -105,3 +109,7 @@ class Rope:
 
     def _move_tail(self, motion):
         pass
+
+    @property
+    def stretched(self):
+        return not self.head.touches(self.tail)
