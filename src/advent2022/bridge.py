@@ -24,25 +24,6 @@ class Motion:
     def unpack(self):
         return [self.__class__(1) for _ in range(self.steps)]
 
-    @property
-    def as_vector(self):
-        match self:
-            case R(steps): return Vector(steps, 0)
-            case U(steps): return Vector(0, steps)
-            case L(steps): return Vector(-steps, 0)
-            case D(steps): return Vector(0, -steps)
-            case z if z == Z: return Vector(0, 0)
-            case _:
-                raise NotImplementedError('Wrong path of execution')
-
-    @property
-    def from_vector(cls, vector: Vector):
-        match vector:
-            case Vector(0, 0): return Z
-            case Vector(dx, 0) if dx >= 0: return R(dx)
-            case Vector(dx, 0) if dx < 0: return L(dx)
-            case Vector(0, dy) if dy >= 0: return U(dy)
-            case Vector(0, dy) if dy < 0: return D(dy)
 
 class R(Motion):
     pass
