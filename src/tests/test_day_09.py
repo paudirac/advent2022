@@ -149,3 +149,13 @@ def test_vector():
     assert Point(2, -3) - o == Vector(2, -3)
 
     assert Point(3, 2) - Point(1, 1) == Vector(2, 1)
+
+def test_vector_to_motion():
+    assert Vector(0, 0).as_motion == Z
+    assert Vector(1, 0).as_motion == R(1)
+    assert Vector(-1, 0).as_motion == L(1)
+    assert Vector(0, 1).as_motion == U(1)
+    assert Vector(0, -1).as_motion == D(1)
+
+    assert Vector(4, 0).as_motion == R(4)
+    assert Vector(0, -3).as_motion == D(3)

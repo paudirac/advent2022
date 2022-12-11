@@ -4,7 +4,6 @@ from collections import namedtuple
 from utils import get_logger, flatten
 log = get_logger(__name__)
 
-Vector = namedtuple('Vector', ['dx', 'dy'])
 
 @dataclass
 class Motion:
@@ -25,13 +24,26 @@ class Motion:
         return [self.__class__(1) for _ in range(self.steps)]
 
 
-class R(Motion):
-    pass
-
+class R(Motion): pass
 class U(Motion): pass
 class L(Motion): pass
 class D(Motion): pass
 Z = Motion(0)
+
+
+class Vector(namedtuple('Vector', ['dx', 'dy'])):
+
+    @property
+    def as_motion(self):
+        match self:
+            case Vector(0, 0): return Z
+            case Vector(dx, 0) if dx >= 0: return R(dx)
+            case Vector(dx, 0) if dx < 0: return L(-dx)
+            case Vector(0, dy) if dy >= 0: return U(dy)
+            case Vector(0, dy) if dy < 0: return D(-dy)
+            case _:
+                raise NotImplementedError('Cannot convert {self} to simple motion')
+
 
 def read_motions(lines):
     return [Motion.from_line(line) for line in lines]
