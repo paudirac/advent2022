@@ -63,11 +63,9 @@ class Point(namedtuple('Point', ['x', 'y'])):
     def touches(self, other):
         if not isinstance(other, Point):
             raise TypeError(f'Invalid operation for Point and {type(other)}')
-        x0, y0 = self
-        x1, y1 = other
-        dx = abs(x0 - x1)
-        dy = abs(y0 - y1)
-        return max(dx, dy) <= 1
+
+        motion_to_other = other - self
+        return motion_to_other.length2 <= 2
 
     def move(self, motion: Motion):
         if not isinstance(motion, Motion):
