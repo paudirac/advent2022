@@ -116,6 +116,7 @@ class Pubsub:
         self._subscribers.append(subscriber)
 
     def publish(self, event):
+        log.debug(f'publishing {event=}')
         for subscriber in self._subscribers:
             subscriber(event)
 
@@ -124,48 +125,83 @@ def pubsub():
     return Pubsub()
 
 
+class Head(Pubsub):
 
-
-class Rope(Pubsub):
-
-    def __init__(self, head: Point, tail: Point):
+    def __init__(self, initial_position: Point):
         super().__init__()
-        self.tail_visits = set()
-        self.head = head
-        self.tail = tail
-        self.subscribe(self._move_tail)
+        self.position = initial_position
+
+    def move(self, displacement):
+        self.position = self.position + displacement
+        self.publish(self.position)
+
+
+class Tail:
+
+    def __init__(self, initial_position: Point):
+        self.visits = set()
+        self.position = initial_position
 
     @property
-    def head(self):
-        return self._head
+    def position(self):
+        return self._position
 
-    @head.setter
-    def head(self, value):
-        self._head = value
-        self.publish(value)
+    @position.setter
+    def position(self, value):
+        self._position = value
+        self.visits.add(value)
 
-    @property
-    def tail(self):
-        return self._tail
 
-    @tail.setter
-    def tail(self, value):
-        self._tail = value
-        self.tail_visits.add(value)
-
-    def move_head(self, motion: Motion):
-        displacement = motion_to_vector(motion)
-        self.head = self.head + displacement
-
-    def _move_tail(self, destination):
-        if self.stretched:
+    def follow(self, destination):
+        log.debug(f'following to {destination=}')
+        displacement = destination - self.position
+        if displacement.length2 > 2:
             def distance_to_tail(p):
-                return (p - self.tail).length2
+                return (p - self.position).length2
             candidates = [(distance_to_tail(n), n) for n in destination.neighbours]
             sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
             _, dest = sorted_candidates[0]
-            displacement = dest - self.tail
-            self.tail = self.tail + displacement
+            displacement = dest - self.position
+            self.position = self.position + displacement
+
+
+class Rope:
+
+    def __init__(self, head: Point, tail: Point):
+        self._head = Head(head)
+        self._tail = Tail(tail)
+        self._head.subscribe(self._tail.follow)
+
+    @property
+    def head(self):
+        return self._head.position
+
+    @head.setter
+    def head(self, value):
+        self._head.position = value
+
+    @property
+    def tail(self):
+        return self._tail.position
+
+    @tail.setter
+    def tail(self, value):
+        self._tail.position = value
+
+    def move_head(self, motion: Motion):
+        displacement = motion_to_vector(motion)
+        self._head.move(displacement)
+        #self.head = self.head + displacement
+
+    # def _move_tail(self, destination):
+    #     if self.stretched:
+    #         def distance_to_tail(p):
+    #             return (p - self.tail).length2
+    #         candidates = [(distance_to_tail(n), n) for n in destination.neighbours]
+    #         sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
+    #         _, dest = sorted_candidates[0]
+    #         displacement = dest - self.tail
+    #         self.tail = self.tail + displacement
 
     @property
     def stretched(self):
@@ -173,8 +209,12 @@ class Rope(Pubsub):
 
     @property
     def touching(self):
-        v = self.head - self.tail
+        v = self._head.position - self._tail.position
         return v.length2 <= 2
+
+    @property
+    def tail_visits(self):
+        return self._tail.visits
 
 def positions_tail_visited_at_least_once(lines):
     rope = Rope(Point(0, 0), Point(0, 0))
