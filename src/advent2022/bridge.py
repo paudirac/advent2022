@@ -133,6 +133,7 @@ class Rope(Pubsub):
         self.tail_visits = set()
         self.head = head
         self.tail = tail
+        self.subscribe(self._move_tail)
 
     @property
     def head(self):
@@ -155,8 +156,6 @@ class Rope(Pubsub):
     def move_head(self, motion: Motion):
         displacement = motion_to_vector(motion)
         self.head = self.head + displacement
-        if self.stretched:
-            self._move_tail(self.head)
 
     def _move_tail(self, destination):
         if self.stretched:
