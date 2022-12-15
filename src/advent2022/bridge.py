@@ -147,18 +147,19 @@ class Head(Pubsub):
 class Tail:
 
     def __init__(self, initial_position: Point):
-        self.visits = set()
-        self.position = initial_position
+        self._visits = [initial_position]
+
+    @property
+    def visits(self):
+        return set(self._visits)
 
     @property
     def position(self):
-        return self._position
+        return self._visits[-1]
 
     @position.setter
     def position(self, value):
-        self._position = value
-        self.visits.add(value)
-
+        self._visits.append(value)
 
     def follow(self, destination):
         log.debug(f'following to {destination=}')
