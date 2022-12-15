@@ -116,7 +116,6 @@ class Pubsub:
         self._subscribers.append(subscriber)
 
     def publish(self, event):
-        log.debug(f'publishing {event=}')
         for subscriber in self._subscribers:
             subscriber(event)
 
@@ -127,9 +126,10 @@ def pubsub():
 
 class Knot(Pubsub):
 
-    def __init__(self, initial_position: Point):
+    def __init__(self, initial_position: Point, name=''):
         super().__init__()
         self._visits = [initial_position]
+        self.name = name
 
     @property
     def position(self):
@@ -138,14 +138,16 @@ class Knot(Pubsub):
     @position.setter
     def position(self, value):
         self._visits.append(value)
+        #log.debug(f'publishing {value} {self.name=}')
         self.publish(value)
 
     def move(self, displacement):
         self.position = self.position + displacement
 
     def follow(self, destination):
-        log.debug(f'following to {destination=}')
+        #log.debug(f'following to {destination=} {self.name=}')
         displacement = destination - self.position
+        log.debug(f'displacement: {displacement}')
         if displacement.length2 > 2:
             def distance_to_tail(p):
                 return (p - self.position).length2
@@ -153,6 +155,7 @@ class Knot(Pubsub):
             sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
             _, dest = sorted_candidates[0]
             displacement = dest - self.position
+            #assert displacement.length2 > 2, "Unplankian step!"
             self.position = self.position + displacement
 
     @property
@@ -163,8 +166,8 @@ class Knot(Pubsub):
 class Rope:
 
     def __init__(self, head: Point, tail: Point):
-        self._head = Knot(head)
-        self._tail = Knot(tail)
+        self._head = Knot(head, name='H')
+        self._tail = Knot(tail, name='T')
         self._head.subscribe(self._tail.follow)
 
     @property
@@ -211,16 +214,16 @@ def positions_tail_visited_at_least_once(lines):
 class LongRope:
 
     def __init__(self):
-        self._head = Knot(Point(0, 0))
-        self._knot_1 = Knot(Point(0, 0))
-        self._knot_2 = Knot(Point(0, 0))
-        self._knot_3 = Knot(Point(0, 0))
-        self._knot_4 = Knot(Point(0, 0))
-        self._knot_5 = Knot(Point(0, 0))
-        self._knot_6 = Knot(Point(0, 0))
-        self._knot_7 = Knot(Point(0, 0))
-        self._knot_8 = Knot(Point(0, 0))
-        self._knot_9 = Knot(Point(0, 0))
+        self._head = Knot(Point(0, 0), name='H')
+        self._knot_1 = Knot(Point(0, 0), name='1')
+        self._knot_2 = Knot(Point(0, 0), name='2')
+        self._knot_3 = Knot(Point(0, 0), name='3')
+        self._knot_4 = Knot(Point(0, 0), name='4')
+        self._knot_5 = Knot(Point(0, 0), name='5')
+        self._knot_6 = Knot(Point(0, 0), name='6')
+        self._knot_7 = Knot(Point(0, 0), name='7')
+        self._knot_8 = Knot(Point(0, 0), name='8')
+        self._knot_9 = Knot(Point(0, 0), name='9')
 
         self._head.subscribe (self._knot_1.follow)
         self._knot_1.subscribe(self._knot_2.follow)

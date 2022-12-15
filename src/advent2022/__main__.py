@@ -33,6 +33,7 @@ SOLVERS = {
     '8_1': forest.count_visible_trees,
     '8_2': forest.max_scenic_score,
     '9_1': bridge.positions_tail_visited_at_least_once,
+    '9_2': bridge.positions_tail_visited_at_least_once_long_rope,
 }
 
 
