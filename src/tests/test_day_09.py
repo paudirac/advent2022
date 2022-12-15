@@ -311,3 +311,6 @@ def test_pubsub():
     bus.publish('a')
     assert mock.called
     assert mock.called_arg == 'a'
+
+
+# you might want to visually compare your simulated rope to the one above
