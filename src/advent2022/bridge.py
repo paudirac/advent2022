@@ -131,9 +131,17 @@ class Head(Pubsub):
         super().__init__()
         self.position = initial_position
 
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, value):
+        self._position = value
+        self.publish(value)
+
     def move(self, displacement):
         self.position = self.position + displacement
-        self.publish(self.position)
 
 
 class Tail:
