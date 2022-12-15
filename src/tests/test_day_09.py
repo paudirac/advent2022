@@ -13,6 +13,7 @@ from advent2022.bridge import (
     Vector,
     vector_to_motion,
     positions_tail_visited_at_least_once,
+    pubsub,
 )
 
 example = """
@@ -278,3 +279,21 @@ def test_run():
 
 def test_positions_tail_visited_at_least_once():
     assert positions_tail_visited_at_least_once(lines) == 13
+
+class Mock:
+
+    def __init__(self):
+        self.called = False
+        self.called_arg = None
+
+    def __call__(self, arg):
+        self.called = True
+        self.called_arg = arg
+
+def test_pubsub():
+    mock = Mock()
+    bus = pubsub()
+    bus.subscribe(mock)
+    bus.publish('a')
+    assert mock.called
+    assert mock.called_arg == 'a'

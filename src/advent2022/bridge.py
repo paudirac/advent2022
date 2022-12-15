@@ -107,6 +107,25 @@ def unpack(motions):
     return flatten([motion.unpack() for motion in motions])
 
 
+class Pubsub:
+
+    def __init__(self):
+        self.subscribers = []
+
+    def subscribe(self, subscriber):
+        self.subscribers.append(subscriber)
+
+    def publish(self, event):
+        for subscriber in self.subscribers:
+            subscriber(event)
+
+
+def pubsub():
+    return Pubsub()
+
+
+
+
 class Rope:
 
     def __init__(self, head: Point, tail: Point):
