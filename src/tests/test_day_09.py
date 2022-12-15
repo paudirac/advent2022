@@ -14,6 +14,7 @@ from advent2022.bridge import (
     vector_to_motion,
     positions_tail_visited_at_least_once,
     pubsub,
+    positions_tail_visited_at_least_once_long_rope,
 )
 
 example = """
@@ -277,8 +278,21 @@ def test_run():
     assert rope.tail == Point(1, 2)
     assert len(rope.tail_visits) == 13
 
+example_2 = """
+R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20
+"""
+lines_2 = read_test_input(example_2)
 def test_positions_tail_visited_at_least_once():
     assert positions_tail_visited_at_least_once(lines) == 13
+    assert positions_tail_visited_at_least_once_long_rope(lines) == 1
+    assert positions_tail_visited_at_least_once_long_rope(lines_2) == 36
 
 class Mock:
 

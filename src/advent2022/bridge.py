@@ -186,17 +186,6 @@ class Rope:
     def move_head(self, motion: Motion):
         displacement = motion_to_vector(motion)
         self._head.move(displacement)
-        #self.head = self.head + displacement
-
-    # def _move_tail(self, destination):
-    #     if self.stretched:
-    #         def distance_to_tail(p):
-    #             return (p - self.tail).length2
-    #         candidates = [(distance_to_tail(n), n) for n in destination.neighbours]
-    #         sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
-    #         _, dest = sorted_candidates[0]
-    #         displacement = dest - self.tail
-    #         self.tail = self.tail + displacement
 
     @property
     def stretched(self):
@@ -213,6 +202,47 @@ class Rope:
 
 def positions_tail_visited_at_least_once(lines):
     rope = Rope(Point(0, 0), Point(0, 0))
+    motions = read_motions(lines)
+    for motion in unpack(motions):
+        rope.move_head(motion)
+    return len(rope.tail_visits)
+
+
+class LongRope:
+
+    def __init__(self):
+        self._head = Knot(Point(0, 0))
+        self._knot_1 = Knot(Point(0, 0))
+        self._knot_2 = Knot(Point(0, 0))
+        self._knot_3 = Knot(Point(0, 0))
+        self._knot_4 = Knot(Point(0, 0))
+        self._knot_5 = Knot(Point(0, 0))
+        self._knot_6 = Knot(Point(0, 0))
+        self._knot_7 = Knot(Point(0, 0))
+        self._knot_8 = Knot(Point(0, 0))
+        self._knot_9 = Knot(Point(0, 0))
+
+        self._head.subscribe (self._knot_1.follow)
+        self._knot_1.subscribe(self._knot_2.follow)
+        self._knot_2.subscribe(self._knot_3.follow)
+        self._knot_3.subscribe(self._knot_4.follow)
+        self._knot_4.subscribe(self._knot_5.follow)
+        self._knot_5.subscribe(self._knot_6.follow)
+        self._knot_6.subscribe(self._knot_7.follow)
+        self._knot_7.subscribe(self._knot_8.follow)
+        self._knot_8.subscribe(self._knot_9.follow)
+
+    def move_head(self, motion: Motion):
+        displacement = motion_to_vector(motion)
+        self._head.move(displacement)
+
+    @property
+    def tail_visits(self):
+        return self._knot_9.visits
+
+
+def positions_tail_visited_at_least_once_long_rope(lines):
+    rope = LongRope()
     motions = read_motions(lines)
     for motion in unpack(motions):
         rope.move_head(motion)
