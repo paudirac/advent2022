@@ -125,33 +125,11 @@ def pubsub():
     return Pubsub()
 
 
-class Head(Pubsub):
+class Knot(Pubsub):
 
     def __init__(self, initial_position: Point):
         super().__init__()
-        self.position = initial_position
-
-    @property
-    def position(self):
-        return self._position
-
-    @position.setter
-    def position(self, value):
-        self._position = value
-        self.publish(value)
-
-    def move(self, displacement):
-        self.position = self.position + displacement
-
-
-class Tail:
-
-    def __init__(self, initial_position: Point):
         self._visits = [initial_position]
-
-    @property
-    def visits(self):
-        return set(self._visits)
 
     @property
     def position(self):
@@ -160,6 +138,10 @@ class Tail:
     @position.setter
     def position(self, value):
         self._visits.append(value)
+        self.publish(value)
+
+    def move(self, displacement):
+        self.position = self.position + displacement
 
     def follow(self, destination):
         log.debug(f'following to {destination=}')
@@ -172,6 +154,20 @@ class Tail:
             _, dest = sorted_candidates[0]
             displacement = dest - self.position
             self.position = self.position + displacement
+
+    @property
+    def visits(self):
+        return set(self._visits)
+
+
+class Head(Knot):
+    pass
+
+
+
+class Tail(Knot):
+    pass
+
 
 
 class Rope:
