@@ -160,21 +160,11 @@ class Knot(Pubsub):
         return set(self._visits)
 
 
-class Head(Knot):
-    pass
-
-
-
-class Tail(Knot):
-    pass
-
-
-
 class Rope:
 
     def __init__(self, head: Point, tail: Point):
-        self._head = Head(head)
-        self._tail = Tail(tail)
+        self._head = Knot(head)
+        self._tail = Knot(tail)
         self._head.subscribe(self._tail.follow)
 
     @property
