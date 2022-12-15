@@ -110,13 +110,13 @@ def unpack(motions):
 class Pubsub:
 
     def __init__(self):
-        self.subscribers = []
+        self._subscribers = []
 
     def subscribe(self, subscriber):
-        self.subscribers.append(subscriber)
+        self._subscribers.append(subscriber)
 
     def publish(self, event):
-        for subscriber in self.subscribers:
+        for subscriber in self._subscribers:
             subscriber(event)
 
 
@@ -126,12 +126,22 @@ def pubsub():
 
 
 
-class Rope:
+class Rope(Pubsub):
 
     def __init__(self, head: Point, tail: Point):
+        super().__init__()
         self.tail_visits = set()
         self.head = head
         self.tail = tail
+
+    @property
+    def head(self):
+        return self._head
+
+    @head.setter
+    def head(self, value):
+        self._head = value
+        self.publish(value)
 
     @property
     def tail(self):
