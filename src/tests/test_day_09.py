@@ -229,6 +229,7 @@ def test_add_displacement():
     displacement = Vector(3, -2)
     assert p + displacement == Point(3, -2)
 
+
 def test_tail_follows_head():
     # .....    .....    .....
     # .TH.. -> .T.H. -> ..TH.

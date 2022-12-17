@@ -91,9 +91,9 @@ class Point(namedtuple('Point', ['x', 'y'])):
     @property
     def neighbours(self):
         return [Point(self.x + dx, self.y + dy) for dx, dy in [
-                      (0,  1),
-            (-1,  0),         (1,  0),
-                      (0, -1),
+            (-1, 1),  (0,  1), (1,  1),
+            (-1, 0),           (1,  0),
+            (-1, -1), (0, -1), (1, -1),
         ]]
 
     def to(self, other):
@@ -147,16 +147,39 @@ class Knot(Pubsub):
     def follow(self, destination):
         #log.debug(f'following to {destination=} {self.name=}')
         displacement = destination - self.position
-        log.debug(f'displacement: {displacement}')
-        if displacement.length2 > 2:
-            def distance_to_tail(p):
-                return (p - self.position).length2
-            candidates = [(distance_to_tail(n), n) for n in destination.neighbours]
-            sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
-            _, dest = sorted_candidates[0]
-            displacement = dest - self.position
-            #assert displacement.length2 > 2, "Unplankian step!"
-            self.position = self.position + displacement
+        #log.debug(f'displacement: {displacement}')
+        touching = displacement.length2 <= 2
+
+        if touching:
+            log.debug(f'skip {self.position=} {destination=}')
+            return
+
+        # def distance_to_tail(p):
+        #     return (p - self.position).length2
+
+        # destination_neighbour_candidates = [(distance_to_tail(n), n) for n in destination.neighbours]
+
+        def distance_to_destination(p):
+            dist = (p - destination).length2
+            #log.debug(f'D({p} - {destination}) = {dist}')
+            return dist
+
+        nearest_neighbours_candidates = [
+            (distance_to_destination(n), n) for n in self.position.neighbours
+        ]
+        # log.debug(f'{destination=}')
+        # log.debug(f'{self.position=}')
+        # for dist, candidate in nearest_neighbours_candidates:
+        #     log.debug(f'{candidate=} {dist=}')
+        # log.debug(f'{nearest_neighbours_candidates=}')
+
+        #candidates = destination_neighbour_candidates
+        candidates = nearest_neighbours_candidates
+        sorted_candidates = sorted(candidates, key=lambda dp: dp[0])
+        _, dest = sorted_candidates[0]
+        displacement = dest - self.position
+        # log.debug(f'{dest=}')
+        self.position = self.position + displacement
 
     @property
     def visits(self):
@@ -202,6 +225,7 @@ class Rope:
     @property
     def tail_visits(self):
         return self._tail.visits
+
 
 def positions_tail_visited_at_least_once(lines):
     rope = Rope(Point(0, 0), Point(0, 0))
