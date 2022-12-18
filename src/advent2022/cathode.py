@@ -58,5 +58,16 @@ def parse_instruction(line):
         case _:
             raise NotImplementedError('Unknown token {line}'.format(line=line))
 
+
 def read_program(lines):
     return [parse_instruction(line) for line in lines]
+
+
+ExecBeginNoop = object()
+ExecIncCycle = object()
+ExecEndNoop = object()
+
+def compile_instruction(instruction):
+    match instruction:
+        case Noop:
+            return [ExecBeginNoop, ExecIncCycle, ExecEndNoop]
