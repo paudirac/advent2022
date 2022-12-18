@@ -5,11 +5,22 @@ import math
 from utils import get_logger, flatten
 log = get_logger(__name__)
 
+
 class CPU:
 
     def __init__(self, x):
+        self.history = []
         self.X = x
         self.ticks = 0
+
+    @property
+    def ticks(self):
+        return self._ticks
+
+    @ticks.setter
+    def ticks(self, value):
+        self._ticks = value
+        self.history.append((value, self.X))
 
     def run(self, program):
         for instruction in program:
@@ -26,8 +37,10 @@ class CPU:
         self.ticks += 1
 
     def _addx(self, value):
-        self.ticks += 2
+        self.ticks += 1
         self.X += value
+        self.ticks += 1
+
 
 def make_cpu():
     return CPU(x=1)
