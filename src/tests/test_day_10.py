@@ -10,9 +10,7 @@ from advent2022.cathode import (
     AddX,
     parse_instruction,
     compile_instruction,
-    ExecBeginNoop,
-    ExecIncCycle,
-    ExecEndNoop,
+    BC,
 )
 
 small_example = """
@@ -191,6 +189,47 @@ def test_invalid_token():
     with pytest.raises(Exception):
         parse_instruction('subsx 3')
 
+def test_cpu_run_small_program():
+    cpu = make_cpu()
+    assert cpu.ticks == 0
+    assert cpu.X == 1
+    lines = read_test_input(small_example)
+    small_program = read_program(lines)
+    cpu.run(small_program)
+    assert cpu.X == -1
+    log.debug(f'{cpu.history=}')
+    log.debug(f'{[compile_instruction(i) for i in small_program]=}')
+    assert cpu.ticks == 1 + 2 + 2
+
+    assert cpu.history == [
+        (1, 1),
+        (2, 1),
+        (3, 1),
+        (4, 4),
+        (5, 4),
+    ]
+
+
+def test_cpu_run_large_program():
+    cpu = make_cpu()
+    lines = read_test_input(large_example)
+    large_program = read_program(lines)
+    cpu.run(large_program)
+
+    assert cpu.history[20 - 1] == (20, 21)
+    assert cpu.history[60 - 1] == (60, 19)
+    assert cpu.history[100 - 1] == (100, 18)
+    assert cpu.history[140 - 1] == (140, 21)
+    assert cpu.history[180 - 1] == (180, 16)
+
+    assert cpu.history[220 - 1] == (220, 18)
+
+def test_compile_noop():
+    assert compile_instruction(Noop) == [
+        BC.Tick,
+        BC.Store,
+    ]
+
 def test_cpu_run_program_noop():
     cpu = make_cpu()
     assert cpu.X == 1
@@ -200,6 +239,25 @@ def test_cpu_run_program_noop():
     assert cpu.X == 1
     assert cpu.ticks == 1
 
+def test_compile_addx_v():
+    assert compile_instruction(AddX(2)) == [
+        BC.Tick,
+        BC.Store,
+        BC.Tick,
+        BC.Store,
+        BC.Add1,
+        BC.Add1,
+    ]
+    assert compile_instruction(AddX(-3)) == [
+        BC.Tick,
+        BC.Store,
+        BC.Tick,
+        BC.Store,
+        BC.Sub1,
+        BC.Sub1,
+        BC.Sub1,
+    ]
+
 def test_cpu_run_addx_V():
     cpu = make_cpu()
     assert cpu.X == 1
@@ -208,62 +266,3 @@ def test_cpu_run_addx_V():
     cpu.run(program)
     assert cpu.X == 42
     assert cpu.ticks == 2
-
-def test_cpu_run_small_program():
-    cpu = make_cpu()
-    lines = read_test_input(small_example)
-    small_program = read_program(lines)
-    cpu.run(small_program)
-    assert cpu.X == -1
-    assert cpu.ticks == 5
-
-    assert cpu.history[0] == (0, 1)
-    assert cpu.history[1] == (1, 1)
-    assert cpu.history[2] == (2, 1)
-    assert cpu.history[3] == (3, 4)
-    assert cpu.history[4] == (4, 4)
-    assert cpu.history[5] == (5, -1)
-
-def xtest_cpu_run_large_program():
-    cpu = make_cpu()
-    lines = read_test_input(large_example)
-    large_program = read_program(lines)
-    cpu.run(large_program)
-
-    assert cpu.history[20] == (20, 21)
-    assert cpu.history[60] == (60, 19)
-    assert cpu.history[100] == (100, 18)
-    assert cpu.history[140] == (140, 21)
-    assert cpu.history[180] == (180, 16)
-    assert cpu.history[220] == (220, 18)
-
-
-def test_():
-    assert compile_instruction(Noop) == [
-        ExecBeginNoop,
-        ExecIncCycle,
-        ExecEndNoop,
-    ]
-
-# Don't like this because (a part that it fails) it does not implement
-# the "At the start of the first cycle, the noop instructions begins execution.
-# During the first cycle, X is 1. After the first cycle, the noop instruction
-# finishes execution, doing nothing."
-# Or "At the start of the second cycle, the addx 3 instruction begins execution.
-# During the second cycle, X is still 1."
-#
-# Visitor pattern? instead of pattern matching?
-#
-# instruction.execute(self)
-#
-# Noop.execute(self, cpu):
-#   cpu.start_cycle()
-#   cpu.end_cycle()
-#
-# AddX.execute(self, cpu):
-#   cpu.start_cycle()
-#   cpu.end_cycle()
-#   cpu.strat_cycle()
-#   cpu.X = cpu.X + self.value
-#   cpu.end_cycle()
-#
