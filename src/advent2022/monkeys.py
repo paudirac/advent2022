@@ -3,6 +3,7 @@ from collections import namedtuple
 from functools import cache
 import math
 import enum
+import typing
 
 from utils import get_logger, flatten
 log = get_logger(__name__)
@@ -10,20 +11,40 @@ log = get_logger(__name__)
 def is_blank(line):
     return len(line) == 0
 
-class RawMonkeyDef(list):
-    pass
+
+class Items(list):
+
+    @classmethod
+    def from_spec(cls, spec):
+        STARTING_ITEMS, itemsdef = spec.split(':')
+        assert STARTING_ITEMS == '  Starting items', f'Wrong monkey definition: {lines}'
+        items = list(map(int, itemsdef.strip().split(',')))
+        return cls(items)
+
+
+@dataclass
+class Monkey:
+    name: int
+    items: typing.List[int]
+
+    @classmethod
+    def from_lines(cls, lines):
+        MONKEY, name = lines[0].split(':')[0].split()
+        assert MONKEY == 'Monkey', f'Wrong monkey definition: {lines}'
+        items = Items.from_spec(lines[1])
+        return cls(int(name), items)
+
 
 def monkeys(lines):
     mks = []
-    monkey = RawMonkeyDef()
+    monkey_lines = []
     for i, line in enumerate(lines):
-        log.debug(f'{i} "{line}"')
         if is_blank(line):
-            mks.append(monkey)
-            monkey = RawMonkeyDef()
+            mks.append(Monkey.from_lines(monkey_lines))
+            monkey_lines = []
         else:
-            monkey.append(line)
+            monkey_lines.append(line)
     else:
-        mks.append(monkey)
-    assert all(len(monkey_def) == 6 for monkey_def in mks)
+        mks.append(Monkey.from_lines(monkey_lines))
+    log.debug(f'{mks=}')
     return mks

@@ -45,5 +45,19 @@ def test_read_example():
 def test_is_blank():
     assert is_blank("")
 
+def test_split_colon():
+    assert "Monkey 0:".split(':') == ['Monkey 0', '']
+    assert "Starting items: 79, 98".split(':') == ['Starting items', ' 79, 98']
+
 def test_monkeys():
-    assert len(monkeys(lines)) == 4
+    mks = monkeys(lines)
+    assert len(mks) == 4
+    assert mks[0].name == 0
+    assert mks[1].name == 1
+    assert mks[2].name == 2
+    assert mks[3].name == 3
+
+    assert mks[0].items == [79, 98]
+    assert mks[1].items == [54, 65, 75, 74]
+    assert mks[2].items == [79, 60, 97]
+    assert mks[3].items == [74]
