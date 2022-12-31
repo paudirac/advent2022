@@ -64,6 +64,11 @@ def test_monkeys():
     assert mks[2].items == [79, 60, 97]
     assert mks[3].items == [74]
 
+    assert mks[0].operation(2) == 38
+    assert mks[0].test(23)
+    assert mks[0].test(46)
+    assert not mks[0].test(24)
+
 def test_operation():
     with pytest.raises(Exception):
         Operation.from_spec("  Tperation: new = old * 19")
@@ -84,7 +89,6 @@ def test_test():
         "    If true: throw to monkey 0",
         "    If false: throw to monkey 1",
     )
-    log.debug(f'{test=}')
     assert not test(1)
     assert test(17)
     assert not test(18)

@@ -52,7 +52,7 @@ class Operation:
             op2 = int(self.operand2)
         return self.operation(op1, op2)
 
-    def __str__(self):
+    def __repr__(self):
         return f'Operation({self.operand1} {self.operation_name} {self.operand2})'
 
 
@@ -63,9 +63,9 @@ RE_IF_FALSE = re.compile(r'\s*If false: throw to monkey (\d+)')
 @dataclass
 class Test:
     __test__ = False # prevent pytest to collect this class
-    divisible_by: str
-    monkey_iftrue: str
-    monkey_iffalse: str
+    divisible_by: int
+    monkey_iftrue: int
+    monkey_iffalse: int
 
     @classmethod
     def from_spec(cls, test, iftrue, iffalse):
@@ -104,8 +104,11 @@ class Monkey:
         assert MONKEY == 'Monkey', f'Wrong monkey name spec: "{lines[0]}"'
         items = Items.from_spec(lines[1])
         operation = Operation.from_spec(lines[2])
-        test = Test(lines[3], lines[4], lines[5])
+        test = Test.from_spec(lines[3], lines[4], lines[5])
         return cls(int(name), items, operation, test)
+
+    def __repr__(self):
+        return f'Monkey({self.name}, {self.items!r}, {self.operation!r}, {self.test!r})'
 
 
 def monkeys(lines):
@@ -119,5 +122,4 @@ def monkeys(lines):
             monkey_lines.append(line)
     else:
         mks.append(Monkey.from_lines(monkey_lines))
-    log.debug(f'{mks=}')
     return mks
