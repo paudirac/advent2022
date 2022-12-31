@@ -72,3 +72,7 @@ def test_input_day_09():
 def test_input_day_10():
     lines = read_input(10)
     assert len(lines) == 144
+
+def test_input_day_11():
+    lines = read_input(11)
+    assert len(lines) == 55
