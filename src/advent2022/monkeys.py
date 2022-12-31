@@ -21,18 +21,41 @@ class Items(list):
         items = list(map(int, itemsdef.strip().split(',')))
         return cls(items)
 
+@dataclass
+class Operation:
+    raw: str
+
+    @classmethod
+    def from_spec(cls, spec):
+        return cls(spec)
+
+@dataclass
+class Test:
+    raw_test: str
+    raw_iftrue: str
+    raw_iffalse: str
+
+    @classmethod
+    def from_spec(cls, test, iftrue, iffalse):
+        return cls(test, iftrue, iffalse)
+
 
 @dataclass
 class Monkey:
     name: int
-    items: typing.List[int]
+    items: Items
+    operation: Operation
+    test: Test
 
     @classmethod
     def from_lines(cls, lines):
+        assert len(lines) == 6, f'Wrong monkey definition {lines}'
         MONKEY, name = lines[0].split(':')[0].split()
-        assert MONKEY == 'Monkey', f'Wrong monkey definition: {lines}'
+        assert MONKEY == 'Monkey', f'Wrong monkey name: {lines[0]}'
         items = Items.from_spec(lines[1])
-        return cls(int(name), items)
+        operation = Operation.from_spec(lines[2])
+        test = Test(lines[3], lines[4], lines[5])
+        return cls(int(name), items, operation, test)
 
 
 def monkeys(lines):
