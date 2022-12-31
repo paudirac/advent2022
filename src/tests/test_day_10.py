@@ -11,6 +11,12 @@ from advent2022.cathode import (
     parse_instruction,
     compile_instruction,
     BC,
+    strength,
+    sum_20_and_40s_strengths,
+    sprite,
+    sprite_history,
+    crt,
+    print_crt,
 )
 
 small_example = """
@@ -266,3 +272,52 @@ def test_cpu_run_addx_V():
     cpu.run(program)
     assert cpu.X == 42
     assert cpu.ticks == 2
+
+def test_cpu_signal_strength():
+    cpu = make_cpu()
+    lines = read_test_input(large_example)
+    large_program = read_program(lines)
+    cpu.run(large_program)
+
+    assert strength(cpu.history[20 - 1]) == 20 * 21
+    assert strength(cpu.history[60 - 1]) == 60 * 19
+    assert strength(cpu.history[100 - 1]) == 100 * 18
+    assert strength(cpu.history[140 - 1]) == 140 * 21
+    assert strength(cpu.history[180 - 1]) == 180 * 16
+
+def test_signal_strength_20_and_every_40():
+    lines = read_test_input(large_example)
+    assert sum_20_and_40s_strengths(lines) == 13140
+
+def test_sprite_position():
+    cpu = make_cpu()
+    lines = read_test_input(large_example)
+    large_program = read_program(lines)
+    cpu.run(large_program)
+    history = cpu.history
+
+    spritehistory = list(map(sprite, history))
+    assert history[1 - 1] == (1, 1)
+    assert spritehistory[0] == (1, [0, 1, 2])
+    assert history[2 - 1] == (2, 1)
+    assert spritehistory[1] == (2, [0, 1, 2])
+    assert history[3 - 1] == (3, 16)
+    assert spritehistory[2] == (3, [15, 16, 17])
+
+def test_sprite_history():
+    lines = read_test_input(large_example)
+    spritehistory = sprite_history(lines)
+    assert len(spritehistory) == 6 * 40
+
+def test_crt():
+    lines = read_test_input(large_example)
+    crtlines = crt(lines)
+    assert len(crtlines) == 6 * 40
+    log.debug(f'{crtlines=}')
+    assert crtlines[0:40] == '##..##..##..##..##..##..##..##..##..##..'
+    assert crtlines[40:80] == '###...###...###...###...###...###...###.'
+
+def test_print_crt():
+    lines = read_test_input(large_example)
+    print_crt(lines)
+    assert False

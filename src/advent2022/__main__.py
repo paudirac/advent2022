@@ -13,6 +13,7 @@ from advent2022 import (
     device,
     forest,
     bridge,
+    cathode,
 )
 
 SOLVERS = {
@@ -34,6 +35,8 @@ SOLVERS = {
     '8_2': forest.max_scenic_score,
     '9_1': bridge.positions_tail_visited_at_least_once,
     '9_2': bridge.positions_tail_visited_at_least_once_long_rope,
+    '10_1': cathode.sum_20_and_40s_strengths,
+    '10_2': cathode.print_crt,
 }
 
 

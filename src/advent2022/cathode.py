@@ -20,7 +20,6 @@ class CPU:
             self._run_instruction(instruction)
 
     def _run_instruction(self, instruction):
-        log.debug(f'run_instruction: {instruction}')
         bytecodes = compile_instruction(instruction)
         for bytecode in bytecodes:
             match bytecode:
@@ -38,7 +37,6 @@ class CPU:
 
     def _store(self):
         state = (self.ticks, self.X)
-        log.debug(f'{state=}')
         self.history.append(state)
 
     def _add1(self):
@@ -102,3 +100,46 @@ def compile_instruction(instruction):
                 [BC.Sub1 for _ in range(abs(n))]
         case Noop:
             return [BC.Tick, BC.Store]
+
+
+def strength(state):
+    cycle, register = state
+    return cycle * register
+
+def sum_signal_strenths(strengths, condition):
+    sum(signal_strength(c))
+
+def sum_20_and_40s_strengths(lines):
+    cpu = make_cpu()
+    large_program = read_program(lines)
+    cpu.run(large_program)
+
+    MAX = cpu.history[-1][0]
+    selected_cycles = list(range(20, MAX, 40))
+    def condition(state):
+        cycle, _ = state
+        return cycle in selected_cycles
+    selected = [state for state in cpu.history if condition(state)]
+    return sum(map(strength, selected))
+
+def sprite(state):
+    c, pos = state
+    return (c, [pos - 1, pos, pos + 1])
+
+def sprite_history(lines):
+    cpu = make_cpu()
+    large_program = read_program(lines)
+    cpu.run(large_program)
+    history = cpu.history
+    return list(map(sprite, history))
+
+def crt(lines):
+    spritehistory = sprite_history(lines)
+    def pos(c):
+        return (c - 1) % 40
+    return ''.join(['#' if pos(c) in positions else '.' for c, positions in spritehistory])
+
+def print_crt(lines):
+    crtlines = crt(lines)
+    for i in range(6):
+        print(crtlines[40*i: 40*i+40])
