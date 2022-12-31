@@ -313,7 +313,6 @@ def test_crt():
     lines = read_test_input(large_example)
     crtlines = crt(lines)
     assert len(crtlines) == 6 * 40
-    log.debug(f'{crtlines=}')
     assert crtlines[0:40] == '##..##..##..##..##..##..##..##..##..##..'
     assert crtlines[40:80] == '###...###...###...###...###...###...###.'
 
