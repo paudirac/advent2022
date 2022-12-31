@@ -4,6 +4,7 @@ from functools import cache
 import math
 import enum
 import typing
+import re
 
 from utils import get_logger, flatten
 log = get_logger(__name__)
@@ -54,15 +55,39 @@ class Operation:
     def __str__(self):
         return f'Operation({self.operand1} {self.operation_name} {self.operand2})'
 
+
+RE_DIVISIBLE_BY = re.compile(r'\s*Test: divisible by (\d+)')
+RE_IF_TRUE = re.compile(r'\s*If true: throw to monkey (\d+)')
+RE_IF_FALSE = re.compile(r'\s*If false: throw to monkey (\d+)')
+
 @dataclass
 class Test:
-    raw_test: str
-    raw_iftrue: str
-    raw_iffalse: str
+    __test__ = False # prevent pytest to collect this class
+    divisible_by: str
+    monkey_iftrue: str
+    monkey_iffalse: str
 
     @classmethod
     def from_spec(cls, test, iftrue, iffalse):
-        return cls(test, iftrue, iffalse)
+        m = RE_DIVISIBLE_BY.match(test)
+        assert m is not None, f'Invalid Test spec: "{test}"'
+        divisible_by = int(m[1])
+
+        mtrue = RE_IF_TRUE.match(iftrue)
+        assert mtrue is not None, f'Invalid If true spec: "{iftrue}"'
+        monkey_if_true = int(mtrue[1])
+
+        mfalse = RE_IF_FALSE.match(iffalse)
+        assert mfalse is not None, f'Invalid If false spec: "{iffalse}"'
+        monkey_if_false = int(mfalse[1])
+
+        return cls(divisible_by, monkey_if_true, monkey_if_false)
+
+    def __call__(self, worry_level):
+        return worry_level % self.divisible_by == 0
+
+    def __repr__(self):
+        return f'Test(divisible by {self.divisible_by}, {self.monkey_iftrue}, {self.monkey_iffalse})'
 
 
 @dataclass

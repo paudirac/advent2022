@@ -7,6 +7,7 @@ from advent2022.monkeys import (
     monkeys,
     is_blank,
     Operation,
+    Test,
 )
 
 example = """
@@ -70,3 +71,24 @@ def test_operation():
     assert Operation.from_spec("  Operation: new = old * 19")(2) == 38
     assert Operation.from_spec("  Operation: new = old + 6")(0) == 6
     assert Operation.from_spec("  Operation: new = old + 6")(6) == 12
+
+def test_test():
+    with pytest.raises(Exception):
+        Test.from_spec(
+            "  Protest: divisible by 17",
+            "    If true: throw to monkey 0",
+            "    If false: throw to monkey 1",
+        )
+    test = Test.from_spec(
+        "  Test: divisible by 17",
+        "    If true: throw to monkey 0",
+        "    If false: throw to monkey 1",
+    )
+    log.debug(f'{test=}')
+    assert not test(1)
+    assert test(17)
+    assert not test(18)
+    assert test(2 * 17)
+
+    assert test.monkey_iftrue == 0
+    assert test.monkey_iffalse == 1
