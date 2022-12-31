@@ -3,6 +3,11 @@ import pytest
 from utils import get_logger, read_test_input
 log = get_logger(__name__)
 
+from advent2022.monkeys import (
+    monkeys,
+    is_blank,
+)
+
 example = """
 Monkey 0:
   Starting items: 79, 98
@@ -37,3 +42,8 @@ lines = read_test_input(example)
 def test_read_example():
     assert len(lines) == 27
 
+def test_is_blank():
+    assert is_blank("")
+
+def test_monkeys():
+    assert len(monkeys(lines)) == 4
