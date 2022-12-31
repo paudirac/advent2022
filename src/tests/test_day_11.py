@@ -1,5 +1,8 @@
 import pytest
 
+from dataclasses import dataclass
+from collections import deque
+
 from utils import get_logger, read_test_input
 log = get_logger(__name__)
 
@@ -8,6 +11,8 @@ from advent2022.monkeys import (
     is_blank,
     Operation,
     Test,
+    Troop,
+    Monkey,
 )
 
 example = """
@@ -59,10 +64,10 @@ def test_monkeys():
     assert mks[2].name == 2
     assert mks[3].name == 3
 
-    assert mks[0].items == [79, 98]
-    assert mks[1].items == [54, 65, 75, 74]
-    assert mks[2].items == [79, 60, 97]
-    assert mks[3].items == [74]
+    assert mks[0].items == deque([79, 98])
+    assert mks[1].items == deque([54, 65, 75, 74])
+    assert mks[2].items == deque([79, 60, 97])
+    assert mks[3].items == deque([74])
 
     assert mks[0].operation(2) == 38
     assert mks[0].test(23)
@@ -96,3 +101,47 @@ def test_test():
 
     assert test.monkey_iftrue == 0
     assert test.monkey_iffalse == 1
+
+@dataclass
+class TroopStub:
+    mk: Monkey
+
+
+def test_monkey_turn_algorithm():
+    mk = Monkey.from_lines(
+"""Monkey 0:
+  Starting items: 79, 98
+  Operation: new = old * 19
+  Test: divisible by 23
+    If true: throw to monkey 2
+    If false: throw to monkey 3""".split('\n'))
+
+    assert mk.current_item == None
+    mk._inspect()
+    assert mk.current_item == 79
+    mk._operate()
+    assert mk.current_item == 1501
+    mk._relieve()
+    assert mk.current_item == 500
+    assert mk._destination() == 3
+
+
+
+@dataclass
+class MonkeyStub:
+    called: bool = False
+
+    def turn(self, troop):
+        self.called = True
+
+def test_toop_round():
+    mk0 = MonkeyStub()
+    mk1 = MonkeyStub()
+    assert not mk0.called
+    assert not mk1.called
+
+    troop = Troop([(0, mk0), (1, mk1)])
+    troop.round()
+
+    assert mk0.called
+    assert mk1.called

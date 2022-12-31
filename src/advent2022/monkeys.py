@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from collections import namedtuple
+from collections import namedtuple, deque
 from functools import cache
 import math
 import enum
@@ -13,7 +13,7 @@ def is_blank(line):
     return len(line) == 0
 
 
-class Items(list):
+class Items(deque):
 
     @classmethod
     def from_spec(cls, spec):
@@ -90,12 +90,14 @@ class Test:
         return f'Test(divisible by {self.divisible_by}, {self.monkey_iftrue}, {self.monkey_iffalse})'
 
 
+
 @dataclass
 class Monkey:
     name: int
     items: Items
     operation: Operation
     test: Test
+    current_item: int = None
 
     @classmethod
     def from_lines(cls, lines):
@@ -110,6 +112,33 @@ class Monkey:
     def __repr__(self):
         return f'Monkey({self.name}, {self.items!r}, {self.operation!r}, {self.test!r})'
 
+    def _inspect(self):
+        self.current_item = self.items.popleft()
+
+    def _operate(self):
+        self.current_item = self.operation(self.current_item)
+
+    def _relieve(self):
+        self.current_item = math.floor(self.current_item / 3)
+
+    def _destination(self):
+        return self.test.monkey_iftrue if self.test(self.current_item) else self.test.monkey_iffalse
+
+
+    # def turn(self, monkeys):
+    #     for item in self.items:
+    #         t = Turn(item, self.operation, self.test)
+    #         t.inspect()
+    #         t.relief()
+    #         t.test()
+    #         monkeys[t.destination] = t.item
+
+class Troop(dict):
+
+    def round(self):
+        for mk in self.values():
+            mk.turn(self)
+
 
 def monkeys(lines):
     mks = []
@@ -122,4 +151,4 @@ def monkeys(lines):
             monkey_lines.append(line)
     else:
         mks.append(Monkey.from_lines(monkey_lines))
-    return mks
+    return Troop([(m.name, m) for m in mks])
