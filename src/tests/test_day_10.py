@@ -317,7 +317,7 @@ def test_crt():
     assert crtlines[0:40] == '##..##..##..##..##..##..##..##..##..##..'
     assert crtlines[40:80] == '###...###...###...###...###...###...###.'
 
-def test_print_crt():
+def xtest_print_crt():
     lines = read_test_input(large_example)
     print_crt(lines)
     assert False
