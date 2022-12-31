@@ -6,6 +6,7 @@ log = get_logger(__name__)
 from advent2022.monkeys import (
     monkeys,
     is_blank,
+    Operation,
 )
 
 example = """
@@ -61,3 +62,11 @@ def test_monkeys():
     assert mks[1].items == [54, 65, 75, 74]
     assert mks[2].items == [79, 60, 97]
     assert mks[3].items == [74]
+
+def test_operation():
+    with pytest.raises(Exception):
+        Operation.from_spec("  Tperation: new = old * 19")
+    assert Operation.from_spec("  Operation: new = old * 19")(1) == 19
+    assert Operation.from_spec("  Operation: new = old * 19")(2) == 38
+    assert Operation.from_spec("  Operation: new = old + 6")(0) == 6
+    assert Operation.from_spec("  Operation: new = old + 6")(6) == 12
