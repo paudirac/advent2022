@@ -14,6 +14,10 @@ from advent2022.monkeys import (
     Troop,
     Monkey,
     monkey_business,
+    monkey_business_no_relieve,
+    divisible_by_17,
+    divisible_by_3,
+    divisible_by_19,
 )
 
 example = """
@@ -148,7 +152,7 @@ def test_monkey_turn():
 class MonkeyStub:
     called: bool = False
 
-    def turn(self, troop):
+    def turn(self, troop, relieve=True):
         self.called = True
 
 def test_troop_round():
@@ -185,3 +189,26 @@ def test_round():
 
 def test_monkey_business():
     assert monkey_business(lines) == 10605
+
+def xtest_monkey_business_no_relieve():
+    assert monkey_business_no_relieve(lines) == 2713310158
+
+def test_divisible_by_17():
+    assert divisible_by_17(17)
+    assert divisible_by_17(289)
+    assert not divisible_by_17(18)
+    assert not divisible_by_17(290)
+
+def test_divisible_by_3():
+    assert not divisible_by_3(17)
+    assert divisible_by_3(3)
+    assert divisible_by_3(21)
+    assert divisible_by_3(1121031)
+    assert not divisible_by_3(3456194)
+
+def test_divisible_by_19():
+    assert not divisible_by_19(18)
+    assert divisible_by_19(19)
+    assert not divisible_by_19(20)
+    assert divisible_by_19(2337)
+    assert not divisible_by_19(2338)

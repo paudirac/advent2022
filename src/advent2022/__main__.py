@@ -39,6 +39,7 @@ SOLVERS = {
     '10_1': cathode.sum_20_and_40s_strengths,
     '10_2': cathode.print_crt,
     '11_1': monkeys.monkey_business,
+    '11_2': monkeys.monkey_business_no_relieve,
 }
 
 

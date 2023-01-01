@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from collections import namedtuple, deque
-from functools import cache
+from functools import cache, wraps
 import math
 import enum
 import typing
 import re
+import time
 
 from utils import get_logger, flatten
 log = get_logger(__name__)
@@ -60,6 +61,63 @@ RE_DIVISIBLE_BY = re.compile(r'\s*Test: divisible by (\d+)')
 RE_IF_TRUE = re.compile(r'\s*If true: throw to monkey (\d+)')
 RE_IF_FALSE = re.compile(r'\s*If false: throw to monkey (\d+)')
 
+
+def debug(fn):
+    @wraps(fn)
+    def debugee(*args, **kwargs):
+        start = time.time()
+        try:
+            ret = fn(*args, **kwargs)
+        except Exception as e:
+            log.error(f"Error in {fn.__name__}({','.join(map(str,args))})")
+            raise e
+        end = time.time()
+        ms = end - start
+        log.debug(f"{fn.__name__}({','.join(map(str,args))}) -> {ret} {ms:0.3f}")
+        return ret
+    return debugee
+
+@cache
+def divisible_by_17(n):
+    if n < 17 * 3:
+        return n % 17 == 0
+    s = str(n)
+    l = s[-1]
+    rest = int(l) * 5 - int(s[:-1])
+    return rest == 0 or rest % 17 == 0
+
+@debug
+@cache
+def divisible_by_3(n):
+    while n > 21:
+        s = str(n)
+        summed = sum([int(c) for c in s])
+        n = summed
+    return n % 3 == 0
+
+@debug
+@cache
+def divisible_by_19(n):
+    while n > 38:
+        s = str(n)
+        l = s[-1]
+        rest = int(s[:-1]) + 2 * int(l)
+        n = rest
+    return n % 19 == 0
+
+
+
+@cache
+#@debug
+def divisible_by(divisor, worry_level):
+    #log.debug(f'{divisor=} {worry_level=}')
+    match divisor:
+        case 17: return divisible_by_17(worry_level)
+        case 3: return divisible_by_3(worry_level)
+        case 19: return divisible_by_19(worry_level)
+    return worry_level % divisor == 0
+
+
 @dataclass
 class Test:
     __test__ = False # prevent pytest to collect this class
@@ -84,7 +142,7 @@ class Test:
         return cls(divisible_by, monkey_if_true, monkey_if_false)
 
     def __call__(self, worry_level):
-        return worry_level % self.divisible_by == 0
+        return divisible_by(self.divisible_by, worry_level)
 
     def __repr__(self):
         return f'Test(divisible by {self.divisible_by}, {self.monkey_iftrue}, {self.monkey_iffalse})'
@@ -111,7 +169,7 @@ class Monkey:
         return cls(int(name), items, operation, test)
 
     def __repr__(self):
-        return f'Monkey({self.name}, {self.items!r}, {self.operation!r}, {self.test!r})'
+        return f'Monkey({self.name}, {self.items!r}, {self.operation!r}, {self.test!r}, {self.current_item})'
 
     def _inspect(self):
         self.current_item = self.items.popleft()
@@ -119,6 +177,8 @@ class Monkey:
 
     def _operate(self):
         self.current_item = self.operation(self.current_item)
+        #log.debug(f'{self}')
+        #log.debug(f'{self.name} {self.current_item}')
 
     def _relieve(self):
         self.current_item = math.floor(self.current_item / 3)
@@ -126,24 +186,25 @@ class Monkey:
     def _destination(self):
         return self.test.monkey_iftrue if self.test(self.current_item) else self.test.monkey_iffalse
 
-
-    def turn(self, monkeys):
+    def turn(self, monkeys, relieve=True):
         for item in self.items.copy():
             self._inspect()
             self._operate()
-            self._relieve()
+            if relieve:
+                self._relieve()
             dest = self._destination()
             monkeys._throw(self.current_item, dest)
 
 class Troop(dict):
 
-    def round(self):
+    def round(self, relieve=True):
         for mk in self.values():
-            mk.turn(self)
+            mk.turn(self, relieve=relieve)
 
-    def rounds(self, n):
-        for _ in range(n):
-            self.round()
+    def rounds(self, n, relieve=True):
+        for i in range(n):
+            self.round(relieve=relieve)
+            log.debug(f'{i}: {self.monkey_business}')
 
     def _throw(self, item, dest):
         self[dest].items.append(item)
@@ -171,7 +232,10 @@ def monkeys(lines):
     return Troop([(m.name, m) for m in mks])
 
 
-def monkey_business(lines):
+def monkey_business(lines, rounds=20, relieve=True):
     mks = monkeys(lines)
-    mks.rounds(20)
+    mks.rounds(rounds, relieve=relieve)
     return mks.monkey_business
+
+def monkey_business_no_relieve(lines):
+    return monkey_business(lines, rounds=1000, relieve=False)
