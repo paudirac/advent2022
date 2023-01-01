@@ -171,8 +171,7 @@ def test_round():
     assert mks[2].items == deque([])
     assert mks[3].items == deque([])
 
-    for _ in range(19):
-        mks.round()
+    mks.rounds(19)
 
     assert mks[0].items == deque([10, 12, 14, 26, 34])
     assert mks[1].items == deque([245, 93, 53, 199, 115])

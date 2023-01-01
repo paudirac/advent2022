@@ -141,12 +141,21 @@ class Troop(dict):
         for mk in self.values():
             mk.turn(self)
 
+    def rounds(self, n):
+        for _ in range(n):
+            self.round()
+
     def _throw(self, item, dest):
         self[dest].items.append(item)
 
     def __iter__(self):
         return iter(self.values())
 
+    @property
+    def monkey_business(self):
+        activity = sorted([mk.inspected_count for mk in self], reverse=True)
+        first, second = activity[:2]
+        return first * second
 
 def monkeys(lines):
     mks = []
@@ -164,8 +173,5 @@ def monkeys(lines):
 
 def monkey_business(lines):
     mks = monkeys(lines)
-    for _ in range(20):
-        mks.round()
-    activity = sorted([mk.inspected_count for mk in mks], reverse=True)
-    first, second = activity[:2]
-    return first * second
+    mks.rounds(20)
+    return mks.monkey_business
