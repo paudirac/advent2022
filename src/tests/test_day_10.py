@@ -203,8 +203,6 @@ def test_cpu_run_small_program():
     small_program = read_program(lines)
     cpu.run(small_program)
     assert cpu.X == -1
-    log.debug(f'{cpu.history=}')
-    log.debug(f'{[compile_instruction(i) for i in small_program]=}')
     assert cpu.ticks == 1 + 2 + 2
 
     assert cpu.history == [
