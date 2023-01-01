@@ -14,6 +14,7 @@ from advent2022 import (
     forest,
     bridge,
     cathode,
+    monkeys,
 )
 
 SOLVERS = {
@@ -37,6 +38,7 @@ SOLVERS = {
     '9_2': bridge.positions_tail_visited_at_least_once_long_rope,
     '10_1': cathode.sum_20_and_40s_strengths,
     '10_2': cathode.print_crt,
+    '11_1': monkeys.monkey_business,
 }
 
 
