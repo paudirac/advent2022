@@ -98,6 +98,7 @@ class Monkey:
     operation: Operation
     test: Test
     current_item: int = None
+    inspected_count = 0
 
     @classmethod
     def from_lines(cls, lines):
@@ -114,6 +115,7 @@ class Monkey:
 
     def _inspect(self):
         self.current_item = self.items.popleft()
+        self.inspected_count += 1
 
     def _operate(self):
         self.current_item = self.operation(self.current_item)
@@ -125,19 +127,25 @@ class Monkey:
         return self.test.monkey_iftrue if self.test(self.current_item) else self.test.monkey_iffalse
 
 
-    # def turn(self, monkeys):
-    #     for item in self.items:
-    #         t = Turn(item, self.operation, self.test)
-    #         t.inspect()
-    #         t.relief()
-    #         t.test()
-    #         monkeys[t.destination] = t.item
+    def turn(self, monkeys):
+        for item in self.items.copy():
+            self._inspect()
+            self._operate()
+            self._relieve()
+            dest = self._destination()
+            monkeys._throw(self.current_item, dest)
 
 class Troop(dict):
 
     def round(self):
         for mk in self.values():
             mk.turn(self)
+
+    def _throw(self, item, dest):
+        self[dest].items.append(item)
+
+    def __iter__(self):
+        return iter(self.values())
 
 
 def monkeys(lines):
@@ -152,3 +160,12 @@ def monkeys(lines):
     else:
         mks.append(Monkey.from_lines(monkey_lines))
     return Troop([(m.name, m) for m in mks])
+
+
+def monkey_business(lines):
+    mks = monkeys(lines)
+    for _ in range(20):
+        mks.round()
+    activity = sorted([mk.inspected_count for mk in mks], reverse=True)
+    first, second = activity[:2]
+    return first * second

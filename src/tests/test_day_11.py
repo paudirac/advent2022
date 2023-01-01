@@ -13,6 +13,7 @@ from advent2022.monkeys import (
     Test,
     Troop,
     Monkey,
+    monkey_business,
 )
 
 example = """
@@ -108,23 +109,39 @@ class TroopStub:
 
 
 def test_monkey_turn_algorithm():
-    mk = Monkey.from_lines(
-"""Monkey 0:
-  Starting items: 79, 98
-  Operation: new = old * 19
-  Test: divisible by 23
-    If true: throw to monkey 2
-    If false: throw to monkey 3""".split('\n'))
+    mks = monkeys(lines)
 
-    assert mk.current_item == None
-    mk._inspect()
-    assert mk.current_item == 79
-    mk._operate()
-    assert mk.current_item == 1501
-    mk._relieve()
-    assert mk.current_item == 500
-    assert mk._destination() == 3
+    mk0 = mks[0]
+    assert mk0.items == deque([79, 98])
 
+    mk3 = mks[3]
+    assert mk3.items == deque([74])
+
+    assert mk0.current_item == None
+    mk0._inspect()
+    assert mk0.current_item == 79
+    mk0._operate()
+    assert mk0.current_item == 1501
+    mk0._relieve()
+    assert mk0.current_item == 500
+    assert mk0._destination() == 3
+
+    mks._throw(mk0.current_item, 3)
+    assert mk0.items == deque([98])
+    assert mk3.items == deque([74, 500])
+
+def test_monkey_turn():
+    mks = monkeys(lines)
+
+    mk0 = mks[0]
+    assert mk0.items == deque([79, 98])
+
+    mk3 = mks[3]
+    assert mk3.items == deque([74])
+
+    mk0.turn(mks)
+    assert mk0.items == deque([])
+    assert mk3.items == deque([74, 500, 620])
 
 
 @dataclass
@@ -134,7 +151,7 @@ class MonkeyStub:
     def turn(self, troop):
         self.called = True
 
-def test_toop_round():
+def test_troop_round():
     mk0 = MonkeyStub()
     mk1 = MonkeyStub()
     assert not mk0.called
@@ -145,3 +162,27 @@ def test_toop_round():
 
     assert mk0.called
     assert mk1.called
+
+def test_round():
+    mks = monkeys(lines)
+    mks.round()
+    assert mks[0].items == deque([20, 23, 27, 26])
+    assert mks[1].items == deque([2080, 25, 167, 207, 401, 1046])
+    assert mks[2].items == deque([])
+    assert mks[3].items == deque([])
+
+    for _ in range(19):
+        mks.round()
+
+    assert mks[0].items == deque([10, 12, 14, 26, 34])
+    assert mks[1].items == deque([245, 93, 53, 199, 115])
+    assert mks[2].items == deque([])
+    assert mks[3].items == deque([])
+
+    assert mks[0].inspected_count == 101
+    assert mks[1].inspected_count == 95
+    assert mks[2].inspected_count == 7
+    assert mks[3].inspected_count == 105
+
+def test_monkey_business():
+    assert monkey_business(lines) == 10605
